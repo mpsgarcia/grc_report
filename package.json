@@ -1,0 +1,12 @@
+{
+  "name": "grc-report",
+  "version": "1.0.0",
+  "description": "Dashboard Executivo Spread GRC Control",
+  "main": "index.html",
+  "scripts": {
+    "build": "node generate-config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
