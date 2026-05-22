@@ -1,0 +1,8 @@
+# Credenciais sensíveis e configurações locais
+firebase-config.js
+
+# Arquivos temporários e do sistema operacional
+Thumbs.db
+.DS_Store
+*.tmp
+*.log
