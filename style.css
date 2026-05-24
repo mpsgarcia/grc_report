@@ -1,82 +1,99 @@
 /* ==========================================================================
-   COMMAND CENTER GRC - EXECUTIVE PLATFORM DESIGN SYSTEM
-   Visual Executivo Premium: Glassmorphism, Clean Apple Design, Dual Theme
+   COMMAND CENTER GRC - SPREAD DESIGN SYSTEM
+   Identidade Visual Institucional Spread: Laranja + Roxo High-Tech, Dual Theme
+   Paleta Oficial: Laranja #FF7400 · Roxo #4B1196 · Amarelo #FF9A0A
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-    /* Paleta de Cores Premium (Apple / Space Gray Scheme) */
-    --color-apple-blue: #0071e3;
-    --color-apple-blue-hover: #147ce5;
-    --color-apple-blue-active: #0066cc;
-    --color-apple-dark: #09090b;
-    --color-apple-gray: #86868b;
-    --color-apple-light-gray: #d2d2d7;
-    --color-apple-white: #ffffff;
-    --color-apple-card-dark: #121214;
-    --color-apple-card-light: #f5f5f7;
+    /* ── PALETA INSTITUCIONAL SPREAD (Tokens base — NÃO ALTERAR) ── */
+    --color-spread-yellow:  #FF9A0A;  /* Detalhes vibrantes / cor de atenção */
+    --color-spread-orange:  #FF7400;  /* COR PRINCIPAL — CTAs, primary actions */
+    --color-spread-purple:  #4B1196;  /* Cor secundária high-tech — neon/tech */
+    --color-spread-dark:    #2D2D2D;  /* Cinza escuro — textos e fundos */
+    --color-spread-gray:    #7F7F7F;  /* Cinza claro — bordas e neutros */
+    --color-spread-white:   #FFFFFF;  /* Branco institucional */
+
+    /* Variantes derivadas (hover/active) */
+    --color-spread-orange-hover:  #FF8519;
+    --color-spread-orange-active: #E66800;
+    --color-spread-purple-hover:  #5C1AB0;
+    --color-spread-purple-active: #3D0E7A;
+    --color-spread-purple-light:  #6E3AB8;  /* Tom mais claro pra fundos escuros */
+
+    /* Gradient assinatura Spread (Laranja → Roxo) */
+    --gradient-spread: linear-gradient(135deg, var(--color-spread-orange) 0%, var(--color-spread-purple) 100%);
+    --gradient-spread-soft: linear-gradient(135deg, rgba(255, 116, 0, 0.18) 0%, rgba(75, 17, 150, 0.18) 100%);
 
     --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     --font-heading: "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 
-    /* Tema Padrão: Escuro (Executive Deep Ocean / Space Gray) */
-    --bg-app: #09090b; 
-    --bg-surface: rgba(18, 18, 20, 0.75); 
-    --bg-surface-elevated: rgba(24, 24, 28, 0.95);
-    --border-color: rgba(255, 255, 255, 0.08); 
-    --border-color-glow: rgba(0, 113, 227, 0.35); 
-    
-    --text-primary: #f5f5f7;
-    --text-secondary: #a1a1a6;
-    --text-muted: #6b7280;
+    /* Tema Padrão: Escuro (High-Tech Neon — fundo cinza escuro Spread com glow roxo/laranja) */
+    --bg-app: #1A1620;                       /* Fundo deep com leve tom roxo */
+    --bg-surface: rgba(45, 45, 45, 0.78);    /* #2D2D2D Spread com transparência */
+    --bg-surface-elevated: #2D2D2D;          /* #2D2D2D Spread sólido */
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-color-glow: rgba(255, 116, 0, 0.4);  /* Glow laranja Spread */
 
-    --primary: var(--color-apple-blue);
-    --primary-glow: rgba(0, 113, 227, 0.15);
-    --primary-hover: var(--color-apple-blue-hover);
-    
-    --success: #10b981; 
-    --success-glow: rgba(16, 185, 129, 0.12);
-    
-    --warning: #f59e0b; 
-    --warning-glow: rgba(245, 158, 11, 0.12);
-    
-    --danger: #ef4444; 
-    --danger-glow: rgba(239, 68, 68, 0.12);
+    --text-primary: #F5F5F7;
+    --text-secondary: #B5B5BA;
+    --text-muted: #7F7F7F;                   /* Cinza claro Spread oficial */
 
-    --purple: #8b5cf6;
-    --purple-glow: rgba(139, 92, 246, 0.12);
+    /* Cor principal: Laranja Spread */
+    --primary: var(--color-spread-orange);
+    --primary-glow: rgba(255, 116, 0, 0.15);
+    --primary-hover: var(--color-spread-orange-hover);
+
+    /* Roxo: secundária high-tech */
+    --purple: var(--color-spread-purple-light);   /* Versão clara pra contraste no dark */
+    --purple-glow: rgba(75, 17, 150, 0.25);
+
+    /* Status semânticos — verde/vermelho mantidos por convenção; warning = Amarelo Spread */
+    --success: #22C55E;
+    --success-glow: rgba(34, 197, 94, 0.14);
+
+    --warning: var(--color-spread-yellow);   /* Amarelo Spread oficial */
+    --warning-glow: rgba(255, 154, 10, 0.16);
+
+    --danger: #EF4444;
+    --danger-glow: rgba(239, 68, 68, 0.14);
 
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.8);
-    --shadow-glow: 0 0 20px rgba(0, 113, 227, 0.15);
+    --shadow-glow: 0 0 20px rgba(255, 116, 0, 0.18);     /* Glow laranja */
+    --shadow-glow-purple: 0 0 22px rgba(75, 17, 150, 0.30); /* Glow roxo neon high-tech */
     --glass-blur: blur(20px);
     --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="light"] {
-    /* Tema Claro: Minimalista Clean */
-    --bg-app: #f9fafb; 
-    --bg-surface: rgba(255, 255, 255, 0.85); 
-    --bg-surface-elevated: #ffffff;
-    --border-color: rgba(0, 0, 0, 0.08); 
-    --border-color-glow: rgba(0, 113, 227, 0.2);
-    
-    --text-primary: #111827; 
-    --text-secondary: #4b5563;
-    --text-muted: #9ca3af;
+    /* Tema Claro: Branco Institucional com acentos Spread */
+    --bg-app: #FAFAFA;
+    --bg-surface: rgba(255, 255, 255, 0.92);
+    --bg-surface-elevated: var(--color-spread-white);
+    --border-color: rgba(45, 45, 45, 0.10);
+    --border-color-glow: rgba(255, 116, 0, 0.30);
 
-    --primary-glow: rgba(0, 113, 227, 0.08);
-    --success-glow: rgba(16, 185, 129, 0.08);
-    --warning-glow: rgba(245, 158, 11, 0.08);
-    --danger-glow: rgba(239, 68, 68, 0.08);
-    --purple-glow: rgba(139, 92, 246, 0.08);
+    --text-primary: var(--color-spread-dark);       /* #2D2D2D Spread oficial */
+    --text-secondary: #545458;
+    --text-muted: var(--color-spread-gray);         /* #7F7F7F Spread oficial */
 
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
-    --shadow-glow: 0 0 15px rgba(0, 113, 227, 0.1);
+    /* Roxo no claro: tom escuro oficial pra contraste com fundo branco */
+    --purple: var(--color-spread-purple);
+    --purple-glow: rgba(75, 17, 150, 0.10);
+
+    --primary-glow: rgba(255, 116, 0, 0.10);
+    --success-glow: rgba(34, 197, 94, 0.10);
+    --warning-glow: rgba(255, 154, 10, 0.12);
+    --danger-glow: rgba(239, 68, 68, 0.10);
+
+    --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.05);
+    --shadow-md: 0 8px 30px rgba(45, 45, 45, 0.08);
+    --shadow-lg: 0 12px 40px rgba(45, 45, 45, 0.10);
+    --shadow-glow: 0 0 18px rgba(255, 116, 0, 0.12);
+    --shadow-glow-purple: 0 0 20px rgba(75, 17, 150, 0.18);
 }
 
 /* Reset Geral */
@@ -143,13 +160,14 @@ header {
     width: 2.2rem;
     height: 2.2rem;
     border-radius: 50%;
-    background: var(--text-primary);
+    background: var(--gradient-spread);   /* Assinatura Spread: Laranja → Roxo */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--bg-app);
+    color: var(--color-spread-white);
     font-weight: 800;
     font-family: var(--font-heading);
+    box-shadow: var(--shadow-glow-purple);  /* Glow roxo high-tech */
 }
 
 .brand-name {
@@ -162,12 +180,12 @@ header {
 
 .brand-badge {
     font-size: 0.65rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.2rem 0.6rem;
-    background: var(--primary-glow);
-    color: var(--primary);
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.7rem;
+    background: var(--gradient-spread);   /* Assinatura Spread no badge */
+    color: var(--color-spread-white);
     border-radius: 99px;
     margin-left: 0.5rem;
 }
@@ -271,7 +289,7 @@ header {
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--primary);
+    background: var(--gradient-spread);   /* Underline com assinatura Spread */
     border-radius: 99px;
 }
 
@@ -333,7 +351,7 @@ main {
 
 /* 1.1 Card Principal de Comando (GRC Health Score) */
 .card-command-health {
-    background: linear-gradient(135deg, rgba(0, 113, 227, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+    background: linear-gradient(135deg, rgba(255, 116, 0, 0.08) 0%, rgba(75, 17, 150, 0.06) 100%);
     border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 2.25rem;
@@ -345,9 +363,20 @@ main {
     overflow: hidden;
     transition: var(--transition-smooth);
 }
+/* Stripe assinatura Spread no topo do card hero */
+.card-command-health::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-spread);
+    border-radius: 20px 20px 0 0;
+}
 .card-command-health:hover {
-    border-color: rgba(0, 113, 227, 0.25);
-    box-shadow: var(--shadow-md);
+    border-color: rgba(255, 116, 0, 0.30);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
 .health-info-box {
@@ -359,16 +388,17 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.35rem 0.8rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 99px;
     font-size: 0.725rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: var(--primary-glow);
-    color: var(--primary);
+    letter-spacing: 0.06em;
+    background: var(--gradient-spread);   /* Assinatura Spread no badge */
+    color: var(--color-spread-white);
     width: fit-content;
     margin-bottom: 1rem;
+    box-shadow: var(--shadow-glow);
 }
 .health-title {
     font-family: var(--font-heading);
@@ -417,6 +447,7 @@ main {
     stroke: var(--primary);
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-in-out;
+    filter: drop-shadow(0 0 6px rgba(255, 116, 0, 0.45));  /* Glow laranja Spread */
 }
 .gauge-val-text {
     position: absolute;
@@ -853,10 +884,10 @@ main {
     cursor: pointer;
 }
 .exec-table tbody tr.clickable-row:hover {
-    background: rgba(0, 113, 227, 0.04) !important;
+    background: rgba(255, 116, 0, 0.04) !important;
 }
 [data-theme="light"] .exec-table tbody tr.clickable-row:hover {
-    background: rgba(0, 113, 227, 0.02) !important;
+    background: rgba(255, 116, 0, 0.02) !important;
 }
 
 .exec-table td {
@@ -895,9 +926,9 @@ main {
     border: 1px solid var(--border-color);
 }
 .badge-status-pill.in-progress {
-    background: rgba(0, 113, 227, 0.06);
+    background: rgba(255, 116, 0, 0.06);
     color: var(--primary);
-    border: 1px solid rgba(0, 113, 227, 0.15);
+    border: 1px solid rgba(255, 116, 0, 0.15);
 }
 .badge-status-pill.completed {
     background: var(--success-glow);
@@ -1277,7 +1308,7 @@ main {
 .mgr-badge.purple {
     background: var(--purple-glow);
     color: var(--purple);
-    border: 1px solid rgba(139, 92, 246, 0.25);
+    border: 1px solid rgba(75, 17, 150, 0.25);
 }
 .btn-remove-badge {
     background: none;
@@ -1345,22 +1376,25 @@ textarea.form-control {
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: #ffffff;
+    background: var(--gradient-spread);   /* CTA com assinatura Spread */
+    color: var(--color-spread-white);
     border: none;
     padding: 0.6rem 1.4rem;
     border-radius: 9999px;
     font-family: var(--font-primary);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     transition: var(--transition-smooth);
+    box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover {
-    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
+    filter: brightness(1.05);
 }
 
 .btn-secondary {
@@ -1478,7 +1512,7 @@ textarea.form-control {
     gap: 1rem;
     padding: 1.5rem 1.75rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, rgba(0, 113, 227, 0.06) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(255, 116, 0, 0.06) 0%, transparent 60%);
     flex-shrink: 0;
 }
 
@@ -1503,7 +1537,7 @@ textarea.form-control {
     white-space: nowrap;
     flex-shrink: 0;
     margin-top: 0.25rem;
-    box-shadow: 0 0 12px rgba(0, 113, 227, 0.35);
+    box-shadow: 0 0 12px rgba(255, 116, 0, 0.35);
 }
 
 .detail-modal-title {
@@ -1893,12 +1927,12 @@ textarea.form-control {
 
 /* Velocity Card */
 .card-metric.velocity {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(0, 113, 227, 0.05) 100%);
-    border-color: rgba(139, 92, 246, 0.25);
+    background: linear-gradient(135deg, rgba(75, 17, 150, 0.08) 0%, rgba(255, 116, 0, 0.05) 100%);
+    border-color: rgba(75, 17, 150, 0.25);
 }
 
-.card-metric.velocity .metric-value { color: #a78bfa; }
-.card-metric.velocity:hover { border-color: rgba(139, 92, 246, 0.45); }
+.card-metric.velocity .metric-value { color: var(--purple); }
+.card-metric.velocity:hover { border-color: rgba(75, 17, 150, 0.45); }
 
 /* Adaptação do dashboard-grid para 5 cards */
 .dashboard-grid {
@@ -2059,7 +2093,7 @@ textarea.form-control {
 
 .milestone-item.overdue  .milestone-date-badge { background: rgba(239,68,68,0.15);   color: var(--danger); }
 .milestone-item.critical .milestone-date-badge { background: rgba(245,158,11,0.15);  color: var(--warning); }
-.milestone-item.upcoming .milestone-date-badge { background: rgba(0,113,227,0.12);   color: var(--primary); }
+.milestone-item.upcoming .milestone-date-badge { background: rgba(255, 116, 0,0.12);   color: var(--primary); }
 .milestone-item.future   .milestone-date-badge { background: rgba(16,185,129,0.12);  color: var(--success); }
 
 .milestone-content { flex: 1; min-width: 0; }
@@ -2321,7 +2355,7 @@ textarea.form-control {
 .workload-list .workload-count {
     font-weight: 700;
     color: var(--primary);
-    background: var(--primary-glow, rgba(0, 113, 227, 0.1));
+    background: var(--primary-glow, rgba(255, 116, 0, 0.1));
     padding: 0.15rem 0.55rem;
     border-radius: 12px;
     font-size: 0.72rem;
@@ -2354,7 +2388,7 @@ textarea.form-control {
 }
 .pilar-progress-container .pilar-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--purple, #8b5cf6));
+    background: var(--gradient-spread);
     border-radius: 999px;
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -1017,14 +1017,14 @@ function renderCharts() {
             datasets: [{
                 data: Object.values(statusCounts),
                 backgroundColor: [
-                    '#86868b', // Não iniciado (Cinza Neutro)
-                    '#c084fc', // Em andamento (Roxo Soft)
-                    '#0071e3', // Concluído (Azul Premium)
-                    '#f59e0b', // Atrasado (Laranja)
-                    '#ef4444'  // Bloqueado (Vermelho)
+                    '#7F7F7F', // Não iniciado (Cinza Claro Spread)
+                    '#6E3AB8', // Em andamento (Roxo Spread claro)
+                    '#FF7400', // Concluído (Laranja Spread — cor principal)
+                    '#FF9A0A', // Atrasado (Amarelo/Laranja Claro Spread)
+                    '#EF4444'  // Bloqueado (Vermelho — semântico)
                 ],
                 borderWidth: isDark ? 2 : 1,
-                borderColor: isDark ? '#09090b' : '#ffffff'
+                borderColor: isDark ? '#1A1620' : '#FFFFFF'
             }]
         },
         options: {
@@ -1061,13 +1061,13 @@ function renderCharts() {
                 {
                     label: 'Concluído',
                     data: pilarData.map(d => d.concluida),
-                    backgroundColor: '#0071e3', // Azul
+                    backgroundColor: '#FF7400', // Laranja Spread (cor principal)
                     borderRadius: 4
                 },
                 {
                     label: 'Ativos / Outros',
                     data: pilarData.map(d => d.outros),
-                    backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                    backgroundColor: isDark ? 'rgba(75, 17, 150, 0.35)' : 'rgba(75, 17, 150, 0.18)',  // Roxo Spread suave
                     borderRadius: 4
                 }
             ]
