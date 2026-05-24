@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spread GRC Control - Dashboard Executivo</title>
+    <title>Spread GRC Control — Command Center Executivo</title>
     
-    <!-- Link para a folha de estilos premium customizada -->
+    <!-- Design System Premium Customizado -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="app-container">
-        <!-- HEADER PREMIUM -->
+        <!-- ── HEADER PRINCIPAL ── -->
         <header>
             <div class="brand">
                 <div class="brand-icon">S</div>
                 <div class="brand-name-wrapper">
-                    <span class="brand-name">Spread GRC Control</span>
-                    <span class="brand-badge">VP Report</span>
+                    <span class="brand-name">GRC Command Center</span>
+                    <span class="brand-badge">VP Suite</span>
                 </div>
             </div>
             
             <div class="header-actions">
-                <!-- Status da Conexão Firebase -->
+                <!-- Status do Firebase -->
                 <div id="connectionStatus" class="db-status disconnected">
                     <span class="indicator-dot"></span>
                     <span id="statusText">Conectando ao Firebase...</span>
                 </div>
                 
-                <!-- Alternador de Tema (Dark/Light) -->
+                <!-- Alternador de Tema -->
                 <button id="themeToggle" class="btn-theme" title="Alternar Tema">
                     <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.25rem; height: 1.25rem;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
@@ -37,327 +37,320 @@
             </div>
         </header>
 
-        <!-- NAVEGAÇÃO SUPERIOR POR ABAS -->
+        <!-- ── NAVEGAÇÃO DE ABAS EXECUTIVAS ── -->
         <nav class="tabs-navigation">
             <button class="tab-btn active" data-tab="dashboard">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
                 </svg>
-                Dashboard
+                Command Center
             </button>
             <button class="tab-btn" data-tab="activities">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                Atividades (CRUD)
+                Controle Operacional (CRUD)
             </button>
             <button class="tab-btn" data-tab="report">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
-                Relatório do VP
+                Relatório de Ciclo
             </button>
             <button class="tab-btn" data-tab="settings">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Configurações
+                Parâmetros e Cloud
             </button>
         </nav>
 
-        <!-- ÁREA PRINCIPAL -->
+        <!-- ── ÁREA DE CONTEÚDO PRINCIPAL ── -->
         <main>
-            <!-- 1. TELA: DASHBOARD -->
+            
+            <!-- ==========================================
+                 ABA 1: COMMAND CENTER (DASHBOARD HOME)
+                 ========================================== -->
             <section id="tab-dashboard" class="tab-content active">
-                <!-- Header de Aba Executivo -->
-                <div class="section-header" style="margin-bottom: 1.5rem;">
-                    <div class="section-title-wrapper">
-                        <h1>Painel de Controle Executivo</h1>
-                        <p>Visão estratégica integrada de conformidade, riscos e marcos de entrega</p>
-                    </div>
-                </div>
-
-                <!-- CARD DE RESUMO EXECUTIVO & DIAGNÓSTICO -->
-                <div class="card-exec-summary">
-                    <div class="exec-summary-content">
-                        <div class="exec-summary-badge">⚡ Diagnóstico e Saúde GRC</div>
-                        <h3 id="exec-summary-title">Análise de Desempenho do Ciclo</h3>
-                        <p id="exec-summary-text">Aguardando sincronização com o banco de dados Firebase para gerar a avaliação de saúde do ciclo de conformidade...</p>
-                    </div>
-                    <div class="exec-summary-gauge-box">
-                        <div class="gauge-ring-wrapper">
-                            <svg class="gauge-ring" width="100" height="100">
-                                <circle class="gauge-ring-bg" cx="50" cy="50" r="40" stroke="var(--border-color)" stroke-width="8" fill="transparent"/>
-                                <circle id="exec-health-ring" class="gauge-ring-fill" cx="50" cy="50" r="40" stroke="var(--primary)" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-                            </svg>
-                            <div id="exec-health-value" class="gauge-value">0%</div>
+                
+                <!-- GRC Command Center Header -->
+                <div class="exec-grid-command-center">
+                    
+                    <!-- 1. GRC Health Card (Esquerda) -->
+                    <div id="execHealthCard" class="card-command-health">
+                        <div class="health-info-box">
+                            <span class="health-badge">🛡️ Avaliação Estrutural GRC</span>
+                            <h2 id="exec-summary-title" class="health-title">Análise do Ciclo de Governança</h2>
+                            <p id="exec-summary-text" class="health-desc">
+                                Aguardando sincronização e carga inicial do Firebase Cloud para consolidação dos indicadores e parecer analítico da gestão de processos...
+                            </p>
                         </div>
-                        <div class="gauge-label">Saúde Geral GRC</div>
+                        <div class="health-gauge-box">
+                            <div class="gauge-circle-wrapper">
+                                <svg class="gauge-svg" width="110" height="110">
+                                    <circle class="gauge-bg" cx="55" cy="55" r="48" stroke-width="6" fill="transparent"/>
+                                    <circle id="exec-health-ring" class="gauge-fill" cx="55" cy="55" r="48" stroke-width="6" fill="transparent" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+                                </svg>
+                                <div id="exec-health-value" class="gauge-val-text">0%</div>
+                            </div>
+                            <span class="gauge-lbl-text">Health Score</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Sidebar de Riscos e Gargalos Crônicos (Direita) -->
+                    <div class="exec-sidebar-layout">
+                        <!-- Card de Riscos -->
+                        <div class="card-sidebar-exec">
+                            <span class="sidebar-title">
+                                🚨 Gargalos Crônicos e Bloqueios
+                            </span>
+                            <div id="riskHeatmapList" class="risk-heatmap-list">
+                                <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 1rem;">
+                                    Nenhum bloqueio crítico ativo.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-
-
-                <!-- Métricas Principais -->
+                <!-- 3. Cards de Métricas Superiores ( Drill-Down Rápido ) -->
                 <div class="dashboard-grid">
-                    <!-- Metric 1: Total -->
+                    <!-- Total -->
                     <div id="metricCardTotal" class="card-metric clickable" title="Clique para limpar filtros e ver todas as ações">
                         <div class="metric-header">
-                            <span>TOTAL DE ATIVIDADES</span>
-                            <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" /></svg></span>
+                            <span>PORTFÓLIO TOTAL</span>
+                            <span class="metric-icon">💼</span>
                         </div>
                         <div id="metric-total" class="metric-value">0</div>
-                        <div class="metric-footer">Volume monitorado de ações</div>
+                        <div class="metric-footer">Volume total de ações monitoradas</div>
                     </div>
-                    <!-- Metric 2: Concluídas -->
+                    <!-- Concluídas -->
                     <div id="metricCardCompleted" class="card-metric success clickable" title="Clique para filtrar apenas as concluídas">
                         <div class="metric-header">
                             <span>CONCLUÍDAS</span>
-                            <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                            <span class="metric-icon">✓</span>
                         </div>
                         <div id="metric-completed" class="metric-value">0</div>
-                        <div class="metric-footer">Ações 100% finalizadas</div>
+                        <div class="metric-footer">Metas consolidadas no ciclo</div>
                     </div>
-                    <!-- Metric 3: Em andamento -->
+                    <!-- Em Andamento -->
                     <div id="metricCardProgress" class="card-metric purple clickable" title="Clique para filtrar apenas em andamento">
                         <div class="metric-header">
                             <span>EM ANDAMENTO</span>
-                            <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></span>
+                            <span class="metric-icon">⚡</span>
                         </div>
                         <div id="metric-progress" class="metric-value">0</div>
-                        <div class="metric-footer">Ações em andamento ativas</div>
+                        <div class="metric-footer">Ações ativas sob execução do time</div>
                     </div>
-                    <!-- Metric 4: Eficiência (SLA) -->
-                    <div id="metricCardSla" class="card-metric warning clickable" title="Clique para filtrar pontos de atenção (atrasadas/bloqueadas)">
+                    <!-- SLA de Prazos -->
+                    <div id="metricCardSla" class="card-metric warning clickable" title="Clique para filtrar tarefas com atraso ou bloqueio">
                         <div class="metric-header">
                             <span>SLA DE PRAZOS</span>
-                            <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                            <span class="metric-icon">🕒</span>
                         </div>
                         <div id="metric-sla" class="metric-value">0%</div>
-                        <div class="metric-footer">Ações fora de atraso/bloqueio</div>
-                    </div>
-
-                    <!-- Alerta de Atenção (Atrasado/Bloqueado) -->
-                    <div id="attentionAlert" class="attention-card" style="display: none;">
-                        <div class="attention-content">
-                            <span class="attention-badge">⚠️</span>
-                            <div>
-                                <h4 class="attention-title">Pontos de Atenção Identificados</h4>
-                                <p id="attentionText" class="attention-desc">Existem tarefas com status "Atrasado" ou "Bloqueado" no ciclo atual.</p>
-                            </div>
-                        </div>
-                        <button class="btn-secondary" onclick="app.showTab('activities'); document.getElementById('filterStatus').value='Atrasado'; app.filterTasks();">Ver Detalhes</button>
+                        <div class="metric-footer">Ações sem atrasos ou bloqueios</div>
                     </div>
                 </div>
 
-                <!-- GRID DE FRENTES OPERACIONAIS COM DRILL-DOWN (NOVO) -->
+                <!-- 4. Frentes Operacionais & Portfólio (Cards de Áreas com Semáforos e Progresso) -->
                 <div class="frentes-section-title">
-                    <span>💼 Frentes Operacionais & Portfólio de Iniciativas (Drill-Down)</span>
+                    <span>💼 Frentes Operacionais e Áreas Cliente (Drill-Down)</span>
                 </div>
                 <div id="frentesGridBody" class="frentes-grid">
                     <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">
-                        Carregando frentes operacionais do Firestore...
+                        Carregando portfólio de frentes operacionais...
                     </div>
                 </div>
 
-                <!-- GRID DE CONTEÚDO ANALÍTICO E SIDEBAR -->
-                <div class="exec-layout-grid">
-                    <!-- Esquerda: Gráficos de Alta Performance -->
-                    <div class="charts-container" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div class="card-chart" style="flex: 1;">
-                            <div class="chart-title">Status de Entrega por Pilar de Governança</div>
-                            <div class="chart-wrapper">
-                                <canvas id="chartPilar"></canvas>
+                <!-- 5. RADAR OPERACIONAL (Tabela de atividades integrada de drill-down direto na Home!) -->
+                <div class="radar-operational-section">
+                    <div class="radar-header-row">
+                        <span class="radar-title">
+                            🔍 Radar Operacional e Rastreamento Detalhado
+                        </span>
+                        
+                        <div class="radar-filters-bar">
+                            <div class="search-input-wrapper">
+                                <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input type="text" id="inputSearch" class="exec-search-input" placeholder="Pesquisar atividade ou observação...">
                             </div>
-                        </div>
-                        <div class="card-chart" style="flex: 1;">
-                            <div class="chart-title">Distribuição Geral de Status das Atividades</div>
-                            <div class="chart-wrapper">
-                                <canvas id="chartStatus"></canvas>
-                            </div>
+                            
+                            <select id="filterStatus" class="exec-select-filter">
+                                <option value="">Status: Todos</option>
+                                <option value="Não iniciado">Não iniciado</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Atrasado">Atrasado</option>
+                                <option value="Bloqueado">Bloqueado</option>
+                            </select>
+                            
+                            <select id="filterPilar" class="exec-select-filter">
+                                <option value="">Pilar: Todos</option>
+                                <option value="Segurança da Informação">Segurança da Informação</option>
+                                <option value="Privacidade / LGPD">Privacidade / LGPD</option>
+                                <option value="ISO 27001">ISO 27001</option>
+                                <option value="ISO 9001">ISO 9001</option>
+                                <option value="Auditoria Interna">Auditoria Interna</option>
+                                <option value="Processos / Lean">Processos / Lean</option>
+                                <option value="Conscientização">Conscientização</option>
+                            </select>
+                            
+                            <select id="filterResponsible" class="exec-select-filter">
+                                <option value="">Responsável: Todos</option>
+                            </select>
+                            
+                            <select id="filterPriority" class="exec-select-filter">
+                                <option value="">Prioridade: Todas</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Média">Média</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Direita: Marcos de Prazo & Progresso dos Pilares -->
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <!-- Marcos Críticos -->
-                        <div class="exec-sidebar-card">
-                            <div class="exec-sidebar-title">
-                                📅 Marcos Críticos & Prazos
-                            </div>
-                            <div class="milestones-list" id="milestonesListBody">
-                                <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 1rem;">
-                                    Buscando próximos prazos do Firestore...
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Tabela Minimalista de Ações -->
+                    <div class="exec-table-container">
+                        <table class="exec-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Pilar GRC</th>
+                                    <th>Iniciativa / Atividade</th>
+                                    <th>Área Cliente</th>
+                                    <th>Responsável</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>Prazo</th>
+                                    <th>Progresso</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activitiesTableBody">
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                        Sincronizando atividades do Firestore...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-                        <!-- Avanço por Pilar -->
-                        <div class="exec-sidebar-card">
-                            <div class="exec-sidebar-title">
-                                📊 Progresso por Pilar GRC
-                            </div>
-                            <div class="pilar-breakdown-list" id="pilarBreakdownListBody">
-                                <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 1rem;">
-                                    Calculando métricas de pilares...
-                                </div>
-                            </div>
+                <!-- Gráficos de Apoio Ocultáveis no Final -->
+                <div class="charts-container" style="margin-top: 1.5rem; display: flex; gap: 1.5rem;">
+                    <div class="card-chart" style="flex: 1.5;">
+                        <span class="chart-title">Status por Pilar de Governança GRC</span>
+                        <div class="chart-wrapper">
+                            <canvas id="chartPilar"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-chart" style="flex: 1;">
+                        <span class="chart-title">Alocação de Portfólio</span>
+                        <div class="chart-wrapper">
+                            <canvas id="chartStatus"></canvas>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. TELA: ATIVIDADES (CRUD) -->
+            <!-- ==========================================
+                 ABA 2: CRUD OPERACIONAL (TELA CLÁSSICA COM AÇÕES)
+                 ========================================== -->
             <section id="tab-activities" class="tab-content">
                 <div class="section-header">
                     <div class="section-title-wrapper">
                         <h1>Registro Geral GRC</h1>
-                        <p>Controle de conformidade, prazos e responsabilidades</p>
+                        <p>Controle de evidências, auditoria e prazos contratuais</p>
                     </div>
                     
                     <div style="display: flex; gap: 0.75rem;">
                         <button id="btnExportExcel" class="btn-secondary">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            Exportar Excel
+                            📥 Exportar Excel
                         </button>
                         <button id="btnNewActivity" class="btn-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            Nova Atividade
+                            ➕ Nova Atividade
                         </button>
                     </div>
                 </div>
 
-                <!-- Barra de Filtros -->
-                <div class="filters-bar">
-                    <div class="search-wrapper">
-                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <input type="text" id="inputSearch" class="input-search" placeholder="Buscar atividade ou obs...">
+                <!-- Tabela de Gestão de Ações (Edição/Exclusão) -->
+                <div class="radar-operational-section" style="background: var(--bg-surface-elevated);">
+                    <div class="exec-table-container">
+                        <table class="exec-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Pilar GRC</th>
+                                    <th>Iniciativa / Atividade</th>
+                                    <th>Área Cliente</th>
+                                    <th>Responsável</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>Prazo</th>
+                                    <th>Progresso</th>
+                                    <th style="text-align: center; width: 100px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crudTableBody">
+                                <!-- Duplicado dinamicamente via JS de forma simplificada -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div>
-                        <select id="filterStatus" class="filter-select">
-                            <option value="">Status: Todos</option>
-                            <option value="Não iniciado">Não iniciado</option>
-                            <option value="Em andamento">Em andamento</option>
-                            <option value="Concluído">Concluído</option>
-                            <option value="Atrasado">Atrasado</option>
-                            <option value="Bloqueado">Bloqueado</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="filterPilar" class="filter-select">
-                            <option value="">Pilar: Todos</option>
-                            <option value="Segurança da Informação">Segurança da Informação</option>
-                            <option value="Privacidade / LGPD">Privacidade / LGPD</option>
-                            <option value="ISO 27001">ISO 27001</option>
-                            <option value="ISO 9001">ISO 9001</option>
-                            <option value="Auditoria Interna">Auditoria Interna</option>
-                            <option value="Processos / Lean">Processos / Lean</option>
-                            <option value="Conscientização">Conscientização</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="filterResponsible" class="filter-select">
-                            <option value="">Responsável: Todos</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="filterPriority" class="filter-select">
-                            <option value="">Prioridade: Todas</option>
-                            <option value="Alta">Alta</option>
-                            <option value="Média">Média</option>
-                            <option value="Baixa">Baixa</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Tabela CRUD -->
-                <div class="table-container">
-                    <table class="grc-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Pilar</th>
-                                <th>Atividade</th>
-                                <th>Área Cliente</th>
-                                <th>Responsável</th>
-                                <th>Prioridade</th>
-                                <th>Status</th>
-                                <th>Prazo</th>
-                                <th>Progresso</th>
-                                <th style="text-align: center; width: 100px;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="activitiesTableBody">
-                            <tr>
-                                <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                                    Carregando atividades do banco...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </section>
 
-            <!-- 3. TELA: RELATÓRIO DO VP (RESUMO DO CICLO) -->
+            <!-- ==========================================
+                 ABA 3: RELATÓRIO DO VP (GERAÇÃO NARRATIVA)
+                 ========================================== -->
             <section id="tab-report" class="tab-content">
                 <div class="section-header">
                     <div class="section-title-wrapper">
                         <h1>Gerador de Reporte do VP</h1>
-                        <p>Narrativa automática baseada no status das ações de GRC</p>
+                        <p>Síntese executiva formatada para apresentações de diretoria</p>
                     </div>
                 </div>
 
                 <div class="report-layout">
-                    <!-- Esquerda: Seções do Relatório (Editor) -->
+                    <!-- Editor do Report -->
                     <div class="editor-card">
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">📝</span> RESUMO GERAL NARRATIVO
-                            </div>
+                            <div class="editor-section-title">📝 Resumo Geral do Ciclo</div>
                             <textarea id="repNarrative" class="form-control" style="min-height: 90px;"></textarea>
                         </div>
                         
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">✅</span> PRINCIPAIS ENTREGAS DO CICLO
-                            </div>
+                            <div class="editor-section-title">✅ Principais Entregas Consolidadas</div>
                             <textarea id="repDeliveries" class="form-control" style="min-height: 90px;"></textarea>
                         </div>
 
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">⚡</span> ATIVIDADES EM ANDAMENTO RELEVANTES
-                            </div>
+                            <div class="editor-section-title">⚡ Demandas em Execução de Alta Visibilidade</div>
                             <textarea id="repOngoing" class="form-control" style="min-height: 90px;"></textarea>
                         </div>
 
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">⚠️</span> PONTOS DE ATENÇÃO / ATENÇÕES DO CICLO
-                            </div>
+                            <div class="editor-section-title">⚠️ Riscos e Ações Corretivas Necessárias</div>
                             <textarea id="repAttention" class="form-control" style="min-height: 90px;"></textarea>
                         </div>
 
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">🚀</span> PRÓXIMOS PASSOS
-                            </div>
+                            <div class="editor-section-title">🚀 Próximos Passos Estratégicos</div>
                             <textarea id="repNextSteps" class="form-control" style="min-height: 90px;"></textarea>
                         </div>
 
                         <div class="editor-section">
-                            <div class="editor-section-title">
-                                <span style="font-size: 1.1rem;">💡</span> NECESSIDADES / DECISÕES DO VP
-                            </div>
+                            <div class="editor-section-title">💡 Direcionamentos Requeridos do VP</div>
                             <textarea id="repNeeds" class="form-control" style="min-height: 80px;"></textarea>
                         </div>
                     </div>
 
-                    <!-- Direita: Visualização e Ações -->
+                    <!-- Visualização Premium -->
                     <div class="preview-card">
                         <div class="chart-title">
-                            Apresentação Executiva ao VP
+                            Visualização da Ata Executiva
                             <div style="display: flex; gap: 0.5rem;">
                                 <button id="btnCopyReport" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                     Copiar
@@ -369,92 +362,63 @@
                         </div>
                         
                         <div class="report-document" id="reportPreviewDoc">
-                            <!-- Preenchido dinamicamente via JS -->
+                            <!-- Preenchido via JS -->
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 4. TELA: CONFIGURAÇÕES -->
+            <!-- ==========================================
+                 ABA 4: CONFIGURAÇÕES E BANCO CLOUD
+                 ========================================== -->
             <section id="tab-settings" class="tab-content">
                 <div class="config-layout">
-                    <!-- Card 1: Firebase Status -->
+                    <!-- Conexão Firestore -->
                     <div class="config-card">
                         <div class="config-header-wrapper">
                             <div class="config-icon">☁️</div>
                             <div>
                                 <h3 class="config-title">Conexão Firebase Firestore</h3>
-                                <p class="config-subtitle">Controle de credenciais de banco de dados em tempo real</p>
+                                <p class="config-subtitle">Controle de credenciais de banco de dados na nuvem</p>
                             </div>
                         </div>
                         
                         <p class="config-info-text">
-                            O sistema é um aplicativo estático moderno hospedado na Vercel e se conecta de forma direta ao banco de dados Firestore na nuvem.
-                            As credenciais de conexão são carregadas a partir do arquivo <code>firebase-config.js</code> localizado na raiz do projeto.
+                            O sistema está hospedado na Vercel e se conecta em tempo real ao banco de dados Firestore.
+                            Para preencher suas credenciais personalizadas, edite o arquivo <code>firebase-config.js</code> na raiz do projeto.
                         </p>
 
-                        <!-- Mensagem informativa de status -->
                         <div id="configConnectionAlert" class="alert-box warning">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                            <div>
-                                <strong>Pendente de Credenciais Reais:</strong> O sistema está utilizando credenciais de exemplo no arquivo <code>firebase-config.js</code>. Para sincronizar com a sua nuvem real do Firebase, abra o arquivo <code>firebase-config.js</code> no seu editor de código e preencha as chaves da sua conta Firebase.
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-top: 1.5rem;">
-                            <label class="form-label">Carga Inicial (Seeding)</label>
-                            <p class="config-info-text" style="margin-bottom: 0.75rem;">
-                                Uma vez configuradas as credenciais válidas do Firebase, o sistema inicializará a coleção automaticamente.
-                                Se o seu banco Firestore estiver conectado e vazio, as <strong>7 atividades reais</strong> extraídas da planilha 
-                                inicial serão salvas automaticamente na nuvem na primeira execução.
-                            </p>
+                            <!-- Preenchido via JS -->
                         </div>
                     </div>
 
-                    <!-- Card 2: Sobre -->
+                    <!-- Gestão de Parâmetros -->
                     <div class="config-card">
                         <div class="config-header-wrapper" style="margin-bottom: 1rem;">
-                            <div class="config-icon" style="color: var(--purple); background: var(--purple-glow); border-color: rgba(139, 92, 246, 0.2);">🔒</div>
+                            <div class="config-icon" style="color: var(--purple); background: var(--purple-glow);">⚙️</div>
                             <div>
-                                <h3 class="config-title">Segurança e Governança GRC</h3>
-                                <p class="config-subtitle">Diretrizes de proteção e privacidade de dados</p>
-                            </div>
-                        </div>
-                        <p class="config-info-text">
-                            O GRC Control foi projetado para seguir diretrizes rígidas da ISO 27001 e ISO 9001. A hospedagem na Vercel combinada com o Firebase Firestore assegura que todas as transações de dados de controle de atividades de conformidade permaneçam seguras, criptografadas em trânsito (HTTPS) e em repouso na nuvem Firebase.
-                        </p>
-                    </div>
-
-                    <!-- Card 3: Campos Dinâmicos (Responsáveis e Áreas) -->
-                    <div class="config-card">
-                        <div class="config-header-wrapper" style="margin-bottom: 1rem;">
-                            <div class="config-icon" style="color: var(--primary); background: var(--primary-glow); border-color: var(--border-color-glow);">⚙️</div>
-                            <div>
-                                <h3 class="config-title">Gerenciamento de Opções GRC</h3>
-                                <p class="config-subtitle">Acrescente ou remova opções de Responsáveis e Áreas Cliente</p>
+                                <h3 class="config-title">Gerenciamento de Parâmetros GRC</h3>
+                                <p class="config-subtitle">Cadastre ou remova responsáveis e áreas do portfólio</p>
                             </div>
                         </div>
 
-                        <!-- Gerenciamento de Responsáveis -->
-                        <div class="dynamic-mgr-section" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Responsáveis -->
+                        <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
                             <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Responsáveis Mapeados</label>
-                            <div class="options-badge-list" id="mgrResponsiblesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; padding: 1rem; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); border-radius: 12px; min-height: 50px;">
-                                <!-- Populado via JS -->
-                            </div>
+                            <div class="options-badge-list" id="mgrResponsiblesList"></div>
                             <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" id="inputNewResponsible" class="form-control" placeholder="Novo responsável (ex: Marcos)">
+                                <input type="text" id="inputNewResponsible" class="form-control" placeholder="Novo responsável...">
                                 <button id="btnAddNewResponsible" class="btn-primary" style="flex-shrink: 0;">Adicionar</button>
                             </div>
                         </div>
 
-                        <!-- Gerenciamento de Áreas Cliente -->
-                        <div class="dynamic-mgr-section">
+                        <!-- Áreas -->
+                        <div>
                             <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Áreas Cliente Mapeadas</label>
-                            <div class="options-badge-list" id="mgrAreasList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; padding: 1rem; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); border-radius: 12px; min-height: 50px;">
-                                <!-- Populado via JS -->
-                            </div>
+                            <div class="options-badge-list" id="mgrAreasList"></div>
                             <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" id="inputNewArea" class="form-control" placeholder="Nova área (ex: Marketing)">
+                                <input type="text" id="inputNewArea" class="form-control" placeholder="Nova área...">
                                 <button id="btnAddNewArea" class="btn-primary" style="flex-shrink: 0;">Adicionar</button>
                             </div>
                         </div>
@@ -464,7 +428,9 @@
         </main>
     </div>
 
-    <!-- GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) PARA CRUD -->
+    <!-- ==========================================
+         GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) PARA CRUD
+         ========================================== -->
     <div id="execDrawerBackdrop" class="exec-drawer-backdrop"></div>
     <aside id="activityDrawer" class="exec-drawer">
         <div class="drawer-header">
@@ -482,7 +448,7 @@
         <form id="activityForm" style="display: flex; flex-direction: column; height: calc(100% - 73px);">
             <input type="hidden" id="taskDocId">
             <div class="drawer-body">
-                <div class="form-grid" style="grid-template-columns: 1fr;">
+                <div class="form-grid">
                     <!-- ID da Atividade -->
                     <div class="form-group">
                         <label class="form-label" for="taskID">ID da Atividade</label>
@@ -506,23 +472,19 @@
                     <!-- Atividade -->
                     <div class="form-group">
                         <label class="form-label" for="taskAtividade">Atividade</label>
-                        <input type="text" id="taskAtividade" class="form-control" placeholder="Descrição resumida da atividade" required>
+                        <input type="text" id="taskAtividade" class="form-control" placeholder="Descrição resumida" required>
                     </div>
 
                     <!-- Área Cliente -->
                     <div class="form-group">
                         <label class="form-label" for="taskArea">Área Cliente</label>
-                        <select id="taskArea" class="form-control" required>
-                            <!-- Populado dinamicamente via Firebase settings -->
-                        </select>
+                        <select id="taskArea" class="form-control" required></select>
                     </div>
 
                     <!-- Responsável -->
                     <div class="form-group">
                         <label class="form-label" for="taskResponsible">Responsável</label>
-                        <select id="taskResponsible" class="form-control" required>
-                            <!-- Populado dinamicamente via Firebase settings -->
-                        </select>
+                        <select id="taskResponsible" class="form-control" required></select>
                     </div>
 
                     <!-- Prioridade -->
@@ -562,34 +524,33 @@
                     <!-- % Concluído -->
                     <div class="form-group">
                         <label class="form-label" for="taskPercent">Progresso (% Concluído)</label>
-                        <input type="number" id="taskPercent" class="form-control" min="0" max="100" placeholder="0 a 100" required>
+                        <input type="number" id="taskPercent" class="form-control" min="0" max="100" required>
                     </div>
 
                     <!-- Entregável -->
                     <div class="form-group">
                         <label class="form-label" for="taskDeliverable">Entregável / Evidência</label>
-                        <input type="text" id="taskDeliverable" class="form-control" placeholder="Evidência gerada (ex: Documento de revisão no SGI)">
+                        <input type="text" id="taskDeliverable" class="form-control" placeholder="Evidência gerada">
                     </div>
 
                     <!-- Observações -->
                     <div class="form-group">
                         <label class="form-label" for="taskNotes">Observações</label>
-                        <textarea id="taskNotes" class="form-control" placeholder="Detalhes, atrasos ou dependências..."></textarea>
+                        <textarea id="taskNotes" class="form-control" placeholder="Detalhes operacionais, bloqueios..."></textarea>
                     </div>
                 </div>
 
-                <!-- SEÇÃO OPERACIONAL: CHECKLIST (NOVO - EXIBIÇÃO APENAS) -->
-                <div id="drawerChecklistSection" class="drawer-section" style="display: none; margin-top: 1.5rem;">
+                <!-- SEÇÃO OPERACIONAL: CHECKLIST (PLANNER) -->
+                <div id="drawerChecklistSection" class="drawer-section" style="display: none; margin-top: 1rem;">
                     <span class="drawer-section-title">📝 Subtarefas e Checklist (Planner)</span>
                     <div id="drawerChecklistList" class="drawer-checklist-list">
-                        <!-- Populado dinamicamente via JS -->
+                        <!-- Populado dinamicamente -->
                     </div>
                 </div>
             </div>
             
             <div class="drawer-footer">
                 <button type="button" class="btn-danger-outline" id="btnDeleteFromDrawer" style="margin-right: auto; display: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-1.802a2.25 2.25 0 0 0-2.25-2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.802" /></svg>
                     Excluir Atividade
                 </button>
                 <button type="button" class="btn-secondary" id="btnCancelDrawer">Cancelar</button>
@@ -598,16 +559,11 @@
         </form>
     </aside>
 
-    <!-- CARREGAMENTO DE BIBLIOTECAS VIA CDN confiáveis do ES Modules / unpkg -->
-    
-    <!-- Chart.js para os Gráficos do Dashboard -->
+    <!-- CARREGAMENTO DE BIBLIOTECAS VIA CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- SheetJS (xlsx) para Exportação em Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-    <!-- Motor da Aplicação (Carregado como Módulo ES6 para importar as chaves do Firebase) -->
-    <script type="module" src="app.js"></script>
     
+    <!-- Motor JavaScript da Aplicação -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
