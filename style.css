@@ -2180,3 +2180,188 @@ textarea.form-control {
         white-space: nowrap;
     }
 }
+
+/* ==========================================================================
+   EXECUTIVE SUMMARY — HIGHLIGHTS ROW (BLUF + 3 chips RAG)
+   ========================================================================== */
+
+.exec-highlights-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0.85rem;
+}
+
+.exec-highlight-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid;
+    background: var(--bg-surface);
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+}
+
+.exec-highlight-chip:hover {
+    transform: translateY(-1px);
+}
+
+.exec-highlight-chip .chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.exec-highlight-chip.green {
+    color: var(--success);
+    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.06);
+}
+.exec-highlight-chip.green .chip-dot { background: var(--success); }
+
+.exec-highlight-chip.amber {
+    color: var(--warning);
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.06);
+}
+.exec-highlight-chip.amber .chip-dot { background: var(--warning); }
+
+.exec-highlight-chip.red {
+    color: var(--danger);
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.06);
+}
+.exec-highlight-chip.red .chip-dot { background: var(--danger); }
+
+/* Trend slot nos KPI cards (placeholder para Sprint 2 — historiografia) */
+.metric-trend {
+    display: none;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+.metric-trend.visible {
+    display: block;
+}
+.metric-trend.up    { color: var(--success); }
+.metric-trend.down  { color: var(--danger); }
+.metric-trend.flat  { color: var(--text-muted); }
+
+/* Top Milestones (Próximos 3 marcos críticos) */
+.milestones-list .milestone-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--bg-surface);
+    border-radius: 10px;
+    border-left: 3px solid var(--border-color);
+    margin-bottom: 0.5rem;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+.milestones-list .milestone-item:hover { transform: translateX(3px); }
+.milestones-list .milestone-item.red    { border-left-color: var(--danger); }
+.milestones-list .milestone-item.amber  { border-left-color: var(--warning); }
+.milestones-list .milestone-item.green  { border-left-color: var(--success); }
+
+.milestones-list .milestone-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.milestones-list .milestone-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.milestones-list .milestone-meta {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+.milestones-list .milestone-deadline-chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.milestone-deadline-chip.red    { background: rgba(239, 68, 68, 0.14); color: var(--danger); }
+.milestone-deadline-chip.amber  { background: rgba(245, 158, 11, 0.14); color: var(--warning); }
+.milestone-deadline-chip.green  { background: rgba(34, 197, 94, 0.14); color: var(--success); }
+
+/* Workload list */
+.workload-list .workload-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.8rem;
+}
+.workload-list .workload-item:last-child { border-bottom: none; }
+.workload-list .workload-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.workload-list .workload-count {
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-glow, rgba(0, 113, 227, 0.1));
+    padding: 0.15rem 0.55rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+}
+
+/* Pilar progress bars */
+.pilar-progress-container .pilar-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.pilar-progress-container .pilar-progress-row:last-child { border-bottom: none; }
+.pilar-progress-container .pilar-name {
+    flex: 0 0 180px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.pilar-progress-container .pilar-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.pilar-progress-container .pilar-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--purple, #8b5cf6));
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pilar-progress-container .pilar-pct {
+    flex: 0 0 50px;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
