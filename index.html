@@ -51,13 +51,7 @@
                 </svg>
                 Analítico
             </button>
-            <button class="tab-btn" data-tab="settings">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Parâmetros e Cloud
-            </button>
+
         </nav>
 
         <!-- ── ÁREA DE CONTEÚDO PRINCIPAL ── -->
@@ -369,66 +363,7 @@
 
 
 
-            <!-- ==========================================
-                 ABA 4: CONFIGURAÇÕES E BANCO CLOUD
-                 ========================================== -->
-            <section id="tab-settings" class="tab-content">
-                <div class="config-layout">
-                    <!-- Conexão Firestore -->
-                    <div class="config-card">
-                        <div class="config-header-wrapper">
-                            <div class="config-icon">☁️</div>
-                            <div>
-                                <h3 class="config-title">Conexão Firebase Firestore</h3>
-                                <p class="config-subtitle">Controle de credenciais de banco de dados na nuvem</p>
-                            </div>
-                        </div>
-                        
-                        <p class="config-info-text">
-                            O sistema está hospedado na Vercel e se conecta em tempo real ao banco de dados Firestore.
-                            Para preencher suas credenciais personalizadas, edite o arquivo <code>firebase-config.js</code> na raiz do projeto.
-                        </p>
 
-                        <div id="configConnectionAlert" class="alert-box warning">
-                            <!-- Preenchido via JS -->
-                        </div>
-
-                        <!-- Botão de limpeza de banco de dados -->
-                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.75rem;">
-                            <label class="form-label" style="color: var(--danger); font-weight: 700; display: block; margin-bottom: 0.25rem;">⚠️ Zona de Perigo / Limpeza de Dados</label>
-                            <p class="config-info-text" style="margin-bottom: 0.5rem;">
-                                Como os dados de simulação/teste foram gravados anteriormente no seu projeto do Firebase, clique abaixo para excluir permanentemente todas as atividades cadastradas no Firestore e deixar o banco de dados limpo para novas atividades reais.
-                            </p>
-                            <button id="btnClearAllActivities" class="btn-danger-outline" style="width: fit-content; padding: 0.6rem 1.2rem; cursor: pointer; border: 1px solid var(--danger); border-radius: 8px; background: transparent; color: var(--danger); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
-                                🗑️ Limpar Todas as Atividades do Firebase
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Gestão de Parâmetros (Leitura Dinâmica) -->
-                    <div class="config-card">
-                        <div class="config-header-wrapper" style="margin-bottom: 1rem;">
-                            <div class="config-icon" style="color: var(--purple); background: var(--purple-glow);">⚙️</div>
-                            <div>
-                                <h3 class="config-title">Mapeamento de Metadados Ativos</h3>
-                                <p class="config-subtitle">Responsáveis e áreas detectadas dinamicamente nas tarefas do seu Firebase</p>
-                            </div>
-                        </div>
-
-                        <!-- Responsáveis -->
-                        <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
-                            <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Membros do Time Detectados</label>
-                            <div class="options-badge-list" id="mgrResponsiblesList"></div>
-                        </div>
-
-                        <!-- Áreas -->
-                        <div>
-                            <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Áreas Cliente Mapeadas</label>
-                            <div class="options-badge-list" id="mgrAreasList"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </main>
     </div>
 

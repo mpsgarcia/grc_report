@@ -177,42 +177,6 @@ function updateSelectDropdowns() {
     }
 }
 
-// Renderiza os badges interativos na aba de Configurações (Apenas Leitura dinâmica de metadados reais)
-function renderSettingsBadges() {
-    const mgrRespList = document.getElementById("mgrResponsiblesList");
-    const mgrAreaList = document.getElementById("mgrAreasList");
-
-    const dynamicResponsibles = [...new Set(tasksList.map(t => t.responsavel).filter(Boolean))];
-    const dynamicAreas = [...new Set(tasksList.map(t => t.areaCliente).filter(Boolean))];
-
-    if (mgrRespList) {
-        mgrRespList.innerHTML = "";
-        if (dynamicResponsibles.length === 0) {
-            mgrRespList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhum responsável detectado no Firestore.</span>`;
-        } else {
-            dynamicResponsibles.sort().forEach(resp => {
-                const badge = document.createElement("div");
-                badge.className = "mgr-badge";
-                badge.innerHTML = `<span>${resp}</span>`;
-                mgrRespList.appendChild(badge);
-            });
-        }
-    }
-
-    if (mgrAreaList) {
-        mgrAreaList.innerHTML = "";
-        if (dynamicAreas.length === 0) {
-            mgrAreaList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhuma área cliente detectada no Firestore.</span>`;
-        } else {
-            dynamicAreas.sort().forEach(area => {
-                const badge = document.createElement("div");
-                badge.className = "mgr-badge purple";
-                badge.innerHTML = `<span>${area}</span>`;
-                mgrAreaList.appendChild(badge);
-            });
-        }
-    }
-}
 
 // 3. CALCULAR E RENDERIZAR CARDS DE FRENTES OPERACIONAIS COM DRILL-DOWN PULSANTE
 function renderFrentesOperacionais() {
@@ -1521,9 +1485,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Popula dropdowns e badges com valores padrão iniciais imediatamente
+    // Popula dropdowns com valores padrão iniciais imediatamente
     updateSelectDropdowns();
-    renderSettingsBadges();
 
 
 
