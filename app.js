@@ -426,8 +426,8 @@ function renderTasksTable() {
                     </td>
                 `;
                 
-                // Clique na linha abre a gaveta de inspeção diretamente
-                row.addEventListener("click", () => openEditDrawer(task.docId));
+                // Clique na linha abre o modal de detalhes (somente leitura)
+                row.addEventListener("click", () => openDetailModal(task.docId));
                 
                 homeTbody.appendChild(row);
             });
@@ -668,9 +668,9 @@ function populateRiskHeatmap() {
             <span class="risk-badge ${badgeClass}">${task.status}</span>
         `;
 
-        // Ao clicar no risco da barra lateral, abre direto a gaveta de inspeção lateral!
+        // Ao clicar no risco da barra lateral, abre o modal de detalhes
         item.addEventListener("click", () => {
-            openEditDrawer(task.docId);
+            openDetailModal(task.docId);
         });
 
         listBody.appendChild(item);
