@@ -1637,7 +1637,513 @@ textarea.form-control {
 }
 
 
-@media (max-width: 1150px) {
+
+/* ==========================================================================
+   VP ALERT BLOCK — PONTOS DE ATENÇÃO EXECUTIVA
+   ========================================================================== */
+
+.vp-alert-block {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.07) 0%, rgba(245, 158, 11, 0.04) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 16px;
+    padding: 1rem 1.25rem 0.85rem;
+    margin-bottom: 1.25rem;
+    animation: slideDownFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.vp-alert-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+}
+
+.vp-alert-title-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vp-alert-icon { font-size: 1rem; }
+
+.vp-alert-title {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--danger);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.vp-alert-badge {
+    background: var(--danger);
+    color: #fff;
+    border-radius: 20px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    min-width: 22px;
+    text-align: center;
+}
+
+.vp-alert-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.vp-alert-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg-surface);
+    border-radius: 10px;
+    border-left: 3px solid;
+    transition: var(--transition-smooth);
+}
+
+.vp-alert-item:hover { transform: translateX(3px); }
+.vp-alert-item.critical { border-color: var(--danger); }
+.vp-alert-item.warning  { border-color: var(--warning); }
+.vp-alert-item.info     { border-color: var(--primary); }
+
+.vp-alert-item-content { flex: 1; min-width: 0; }
+
+.vp-alert-item-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 0.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vp-alert-item-detail {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vp-alert-item-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.vp-alert-item.critical .vp-alert-item-tag {
+    background: rgba(239, 68, 68, 0.14);
+    color: var(--danger);
+}
+
+.vp-alert-item.warning .vp-alert-item-tag {
+    background: rgba(245, 158, 11, 0.14);
+    color: var(--warning);
+}
+
+/* ==========================================================================
+   MATRIZ DE RISCO 2×2
+   ========================================================================== */
+
+.rq-axis-row {
+    display: grid;
+    grid-template-columns: 24px 1fr 1fr;
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-top: 0.75rem;
+}
+
+.rq-axis-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.rq-grid-wrapper {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.rq-side-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.rq-axis-label-v {
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.rq-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    flex: 1;
+}
+
+.rq-cell {
+    border-radius: 10px;
+    padding: 0.65rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.15rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.rq-cell:hover { transform: scale(1.04); filter: brightness(1.1); }
+
+.rq-cell-emoji { font-size: 0.8rem; }
+
+.rq-cell-count {
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    line-height: 1.1;
+}
+
+.rq-cell-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.rq-critical {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+}
+
+.rq-monitor {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--warning);
+}
+
+.rq-plan {
+    background: rgba(251, 146, 60, 0.1);
+    border: 1px solid rgba(251, 146, 60, 0.25);
+    color: #fb923c;
+}
+
+.rq-accept {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: var(--success);
+}
+
+/* ==========================================================================
+   KPI CARDS — TREND BADGES + CARD VELOCITY
+   ========================================================================== */
+
+.metric-trend {
+    min-height: 1.1rem;
+    margin: 0.1rem 0 0.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-weight: 600;
+    font-size: 0.67rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.trend.up      { background: rgba(16, 185, 129, 0.13); color: var(--success); }
+.trend.down    { background: rgba(239, 68, 68, 0.13);  color: var(--danger); }
+.trend.neutral { background: rgba(134, 134, 139, 0.1); color: var(--text-muted); }
+
+/* Velocity Card */
+.card-metric.velocity {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(0, 113, 227, 0.05) 100%);
+    border-color: rgba(139, 92, 246, 0.25);
+}
+
+.card-metric.velocity .metric-value { color: #a78bfa; }
+.card-metric.velocity:hover { border-color: rgba(139, 92, 246, 0.45); }
+
+/* Adaptação do dashboard-grid para 5 cards */
+.dashboard-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+}
+
+/* ==========================================================================
+   MATURIDADE POR PILAR REGULATÓRIO
+   ========================================================================== */
+
+.pilar-progress-section {
+    margin-bottom: 0.5rem;
+}
+
+.pilar-progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    margin-bottom: 1.25rem;
+}
+
+.pilar-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.pilar-progress-name {
+    min-width: 185px;
+    max-width: 185px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pilar-progress-track {
+    flex: 1;
+    height: 7px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.pilar-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pilar-progress-fill.red    { background: var(--danger); }
+.pilar-progress-fill.yellow { background: var(--warning); }
+.pilar-progress-fill.blue   { background: var(--primary); }
+.pilar-progress-fill.green  { background: var(--success); }
+
+.pilar-progress-pct {
+    min-width: 38px;
+    text-align: right;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+}
+
+.pilar-progress-count {
+    min-width: 52px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: right;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   INSIGHTS ROW — PRÓXIMOS MARCOS + DISTRIBUIÇÃO DE CARGA
+   ========================================================================== */
+
+.insights-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 0 0 1.25rem;
+}
+
+.insight-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.insight-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.insight-card-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.insight-card-subtitle {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+/* Milestones */
+.milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 290px;
+    overflow-y: auto;
+}
+
+.milestone-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    background: var(--bg-surface-elevated);
+    border-left: 3px solid;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.milestone-item:hover { transform: translateX(3px); }
+
+.milestone-item.overdue  { border-color: var(--danger); }
+.milestone-item.critical { border-color: var(--warning); }
+.milestone-item.upcoming { border-color: var(--primary); }
+.milestone-item.future   { border-color: var(--success); }
+
+.milestone-date-badge {
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    font-family: var(--font-heading);
+}
+
+.milestone-item.overdue  .milestone-date-badge { background: rgba(239,68,68,0.15);   color: var(--danger); }
+.milestone-item.critical .milestone-date-badge { background: rgba(245,158,11,0.15);  color: var(--warning); }
+.milestone-item.upcoming .milestone-date-badge { background: rgba(0,113,227,0.12);   color: var(--primary); }
+.milestone-item.future   .milestone-date-badge { background: rgba(16,185,129,0.12);  color: var(--success); }
+
+.milestone-content { flex: 1; min-width: 0; }
+
+.milestone-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.1rem;
+}
+
+.milestone-meta {
+    font-size: 0.63rem;
+    color: var(--text-muted);
+}
+
+/* Workload Distribution */
+.workload-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    max-height: 290px;
+    overflow-y: auto;
+}
+
+.workload-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.workload-name {
+    min-width: 105px;
+    max-width: 105px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.workload-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.workload-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.workload-bar-fill.overloaded { background: var(--danger); }
+.workload-bar-fill.busy       { background: var(--warning); }
+.workload-bar-fill.normal     { background: var(--primary); }
+
+.workload-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 20px;
+    text-align: right;
+    font-family: var(--font-heading);
+}
+
+.workload-tag {
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.12rem 0.4rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    min-width: 58px;
+    text-align: center;
+}
+
+
     .exec-grid-command-center {
         grid-template-columns: 1fr;
     }

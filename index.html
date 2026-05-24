@@ -68,6 +68,21 @@
                  ========================================== -->
             <section id="tab-dashboard" class="tab-content active">
                 
+                <!-- ====================================================
+                     BLOCO DE ALERTAS EXECUTIVOS DO VP
+                     Gerado automaticamente com base nos dados do Firebase
+                     ===================================================== -->
+                <div id="vpAlertBlock" class="vp-alert-block" style="display:none;">
+                    <div class="vp-alert-header-row">
+                        <div class="vp-alert-title-area">
+                            <span class="vp-alert-icon">⚡</span>
+                            <span class="vp-alert-title">Pontos de Atenção — Ação Requerida do VP</span>
+                        </div>
+                        <span id="vpAlertCount" class="vp-alert-badge">0</span>
+                    </div>
+                    <div id="vpAlertList" class="vp-alert-items"></div>
+                </div>
+
                 <!-- GRC Command Center Header -->
                 <div class="exec-grid-command-center">
                     
@@ -92,59 +107,127 @@
                         </div>
                     </div>
 
-                    <!-- 2. Sidebar de Riscos e Gargalos Crônicos (Direita) -->
+                    <!-- 2. Sidebar: Matriz de Risco + Gargalos Crônicos -->
                     <div class="exec-sidebar-layout">
-                        <!-- Card de Riscos -->
+
+                        <!-- [NOVO] Matriz de Risco 2×2 -->
                         <div class="card-sidebar-exec">
-                            <span class="sidebar-title">
-                                🚨 Gargalos Crônicos e Bloqueios
-                            </span>
+                            <span class="sidebar-title">📐 Matriz de Risco Operacional</span>
+                            <div class="rq-axis-row">
+                                <span></span>
+                                <span class="rq-axis-label">Alto Impacto</span>
+                                <span class="rq-axis-label">Baixo Impacto</span>
+                            </div>
+                            <div class="rq-grid-wrapper">
+                                <div class="rq-side-axis">
+                                    <span class="rq-axis-label-v">AltaUrgência</span>
+                                    <span class="rq-axis-label-v">Baixa Urgência</span>
+                                </div>
+                                <div class="rq-grid-2x2">
+                                    <div id="rq-q1" class="rq-cell rq-critical" title="Crítico: Alta prioridade + alta urgência">
+                                        <span class="rq-cell-emoji">🔴</span>
+                                        <span id="rq-q1-count" class="rq-cell-count">0</span>
+                                        <span class="rq-cell-label">CRÍTICO</span>
+                                    </div>
+                                    <div id="rq-q2" class="rq-cell rq-monitor" title="Monitorar: Baixa prioridade + alta urgência">
+                                        <span class="rq-cell-emoji">🟡</span>
+                                        <span id="rq-q2-count" class="rq-cell-count">0</span>
+                                        <span class="rq-cell-label">MONITORAR</span>
+                                    </div>
+                                    <div id="rq-q3" class="rq-cell rq-plan" title="Planejar: Alta prioridade + baixa urgência">
+                                        <span class="rq-cell-emoji">🟠</span>
+                                        <span id="rq-q3-count" class="rq-cell-count">0</span>
+                                        <span class="rq-cell-label">PLANEJAR</span>
+                                    </div>
+                                    <div id="rq-q4" class="rq-cell rq-accept" title="Aceitar: Baixa prioridade + baixa urgência">
+                                        <span class="rq-cell-emoji">🟢</span>
+                                        <span id="rq-q4-count" class="rq-cell-count">0</span>
+                                        <span class="rq-cell-label">ACEITAR</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gargalos Crônicos e Bloqueios -->
+                        <div class="card-sidebar-exec">
+                            <span class="sidebar-title">🚨 Gargalos Crônicos e Bloqueios</span>
                             <div id="riskHeatmapList" class="risk-heatmap-list">
                                 <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 1rem;">
                                     Nenhum bloqueio crítico ativo.
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- 3. Cards de Métricas Superiores ( Drill-Down Rápido ) -->
+                <!-- 3. KPI Cards com Tendências + Velocity -->
                 <div class="dashboard-grid">
+
                     <!-- Total -->
-                    <div id="metricCardTotal" class="card-metric clickable" title="Clique para limpar filtros e ver todas as ações">
+                    <div id="metricCardTotal" class="card-metric clickable" title="Clique para ver todas as ações">
                         <div class="metric-header">
                             <span>PORTFÓLIO TOTAL</span>
                             <span class="metric-icon">💼</span>
                         </div>
                         <div id="metric-total" class="metric-value">0</div>
+                        <div id="trend-total" class="metric-trend"></div>
                         <div class="metric-footer">Volume total de ações monitoradas</div>
                     </div>
+
                     <!-- Concluídas -->
-                    <div id="metricCardCompleted" class="card-metric success clickable" title="Clique para filtrar apenas as concluídas">
+                    <div id="metricCardCompleted" class="card-metric success clickable" title="Clique para filtrar concluídas">
                         <div class="metric-header">
                             <span>CONCLUÍDAS</span>
                             <span class="metric-icon">✓</span>
                         </div>
                         <div id="metric-completed" class="metric-value">0</div>
+                        <div id="trend-completed" class="metric-trend"></div>
                         <div class="metric-footer">Metas consolidadas no ciclo</div>
                     </div>
+
                     <!-- Em Andamento -->
-                    <div id="metricCardProgress" class="card-metric purple clickable" title="Clique para filtrar apenas em andamento">
+                    <div id="metricCardProgress" class="card-metric purple clickable" title="Clique para filtrar em andamento">
                         <div class="metric-header">
                             <span>EM ANDAMENTO</span>
                             <span class="metric-icon">⚡</span>
                         </div>
                         <div id="metric-progress" class="metric-value">0</div>
+                        <div id="trend-progress" class="metric-trend"></div>
                         <div class="metric-footer">Ações ativas sob execução do time</div>
                     </div>
+
                     <!-- SLA de Prazos -->
-                    <div id="metricCardSla" class="card-metric warning clickable" title="Clique para filtrar tarefas com atraso ou bloqueio">
+                    <div id="metricCardSla" class="card-metric warning clickable" title="Clique para ver atrasos e bloqueios">
                         <div class="metric-header">
                             <span>SLA DE PRAZOS</span>
                             <span class="metric-icon">🕒</span>
                         </div>
                         <div id="metric-sla" class="metric-value">0%</div>
-                        <div class="metric-footer">Ações sem atrasos ou bloqueios</div>
+                        <div id="trend-sla" class="metric-trend"></div>
+                        <div class="metric-footer">Ações sem atrasos ou bloqueios • <strong>Meta: ≥90%</strong></div>
+                    </div>
+
+                    <!-- Velocity -->
+                    <div id="metricCardVelocity" class="card-metric velocity clickable" title="Entregas concluídas nesta semana">
+                        <div class="metric-header">
+                            <span>VELOCITY</span>
+                            <span class="metric-icon">🚀</span>
+                        </div>
+                        <div id="metric-velocity" class="metric-value">0</div>
+                        <div id="trend-velocity" class="metric-trend"></div>
+                        <div class="metric-footer">Entregas concluídas esta semana</div>
+                    </div>
+
+                </div>
+
+                <!-- [NOVO] Maturidade por Pilar Regulatório -->
+                <div class="pilar-progress-section">
+                    <div class="frentes-section-title">
+                        <span>📊 Maturidade por Pilar Regulatório — Avanço Consolidado</span>
+                    </div>
+                    <div id="pilarProgressContainer" class="pilar-progress-container">
+                        <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1.5rem;">Aguardando dados do Firebase...</div>
                     </div>
                 </div>
 
@@ -156,6 +239,33 @@
                     <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">
                         Carregando portfólio de frentes operacionais...
                     </div>
+                </div>
+
+                <!-- [NOVO] Próximos Marcos + Distribuição de Carga -->
+                <div class="insights-row-grid">
+
+                    <!-- Próximos Marcos -->
+                    <div class="insight-card">
+                        <div class="insight-card-header">
+                            <span class="insight-card-title">🗓️ Próximos Marcos — Visibilidade 60 Dias</span>
+                            <span class="insight-card-subtitle">Ações com prazo se aproximando, ordenadas por urgência</span>
+                        </div>
+                        <div id="nextMilestonesList" class="milestones-list">
+                            <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Carregando marcos...</div>
+                        </div>
+                    </div>
+
+                    <!-- Distribuição de Carga -->
+                    <div class="insight-card">
+                        <div class="insight-card-header">
+                            <span class="insight-card-title">👥 Distribuição de Carga por Responsável</span>
+                            <span class="insight-card-subtitle">Atividades ativas (excluindo concluídas)</span>
+                        </div>
+                        <div id="workloadList" class="workload-list">
+                            <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Carregando distribuição...</div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- 5. RADAR OPERACIONAL (Tabela de atividades integrada de drill-down direto na Home!) -->
