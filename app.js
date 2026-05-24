@@ -927,10 +927,11 @@ function populateRiskHeatmap() {
             badgeClass = "warning";
         }
 
+        const motivo = task.observacoes || task.description || "Motivo não informado";
         item.innerHTML = `
             <div class="risk-info">
                 <span class="risk-name" title="${task.atividade}">[${task.id}] ${task.atividade}</span>
-                <span class="risk-date">Área: ${task.areaCliente} • Resp: ${task.responsavel}</span>
+                <span class="risk-date">Área: ${task.areaCliente} • Resp: ${task.responsavel} • ${motivo}</span>
             </div>
             <span class="risk-badge ${badgeClass}">${task.status}</span>
         `;
