@@ -777,6 +777,7 @@ function populateTopMilestones() {
             const daysLeft = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
             return { ...t, _daysLeft: daysLeft, _due: due };
         })
+        .filter(t => t._daysLeft <= 7)
         .sort((a, b) => a._daysLeft - b._daysLeft);
 
     if (candidates.length === 0) {
