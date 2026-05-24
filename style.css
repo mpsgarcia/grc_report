@@ -4,7 +4,7 @@
    Paleta Oficial: Laranja #FF7400 · Roxo #4B1196 · Amarelo #FF9A0A
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 :root {
     /* ── PALETA INSTITUCIONAL SPREAD (Tokens base — NÃO ALTERAR) ── */
@@ -26,15 +26,15 @@
     --gradient-spread: linear-gradient(135deg, var(--color-spread-orange) 0%, var(--color-spread-purple) 100%);
     --gradient-spread-soft: linear-gradient(135deg, rgba(255, 116, 0, 0.18) 0%, rgba(75, 17, 150, 0.18) 100%);
 
-    --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    --font-heading: "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    --font-primary: "Ubuntu", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    --font-heading: "Montserrat", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 
-    /* Tema Padrão: Escuro (High-Tech Neon — fundo cinza escuro Spread com glow roxo/laranja) */
+    /* Tema Padrão: Escuro (Sem Neons) */
     --bg-app: #1A1620;                       /* Fundo deep com leve tom roxo */
     --bg-surface: rgba(45, 45, 45, 0.78);    /* #2D2D2D Spread com transparência */
     --bg-surface-elevated: #2D2D2D;          /* #2D2D2D Spread sólido */
     --border-color: rgba(255, 255, 255, 0.08);
-    --border-color-glow: rgba(255, 116, 0, 0.4);  /* Glow laranja Spread */
+    --border-color-glow: rgba(255, 255, 255, 0.08);  /* Removido glow laranja */
 
     --text-primary: #F5F5F7;
     --text-secondary: #B5B5BA;
@@ -62,8 +62,8 @@
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.8);
-    --shadow-glow: 0 0 20px rgba(255, 116, 0, 0.18);     /* Glow laranja */
-    --shadow-glow-purple: 0 0 22px rgba(75, 17, 150, 0.30); /* Glow roxo neon high-tech */
+    --shadow-glow: var(--shadow-sm);     /* Removido glow laranja */
+    --shadow-glow-purple: var(--shadow-sm); /* Removido glow roxo neon */
     --glass-blur: blur(20px);
     --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -74,7 +74,7 @@
     --bg-surface: rgba(255, 255, 255, 0.92);
     --bg-surface-elevated: var(--color-spread-white);
     --border-color: rgba(45, 45, 45, 0.10);
-    --border-color-glow: rgba(255, 116, 0, 0.30);
+    --border-color-glow: rgba(45, 45, 45, 0.10);  /* Removido glow */
 
     --text-primary: var(--color-spread-dark);       /* #2D2D2D Spread oficial */
     --text-secondary: #545458;
@@ -92,8 +92,8 @@
     --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.05);
     --shadow-md: 0 8px 30px rgba(45, 45, 45, 0.08);
     --shadow-lg: 0 12px 40px rgba(45, 45, 45, 0.10);
-    --shadow-glow: 0 0 18px rgba(255, 116, 0, 0.12);
-    --shadow-glow-purple: 0 0 20px rgba(75, 17, 150, 0.18);
+    --shadow-glow: var(--shadow-sm);
+    --shadow-glow-purple: var(--shadow-sm);
 }
 
 /* Reset Geral */
@@ -447,7 +447,6 @@ main {
     stroke: var(--primary);
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-in-out;
-    filter: drop-shadow(0 0 6px rgba(255, 116, 0, 0.45));  /* Glow laranja Spread */
 }
 .gauge-val-text {
     position: absolute;

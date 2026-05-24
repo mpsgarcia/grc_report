@@ -265,7 +265,7 @@ function renderFrentesOperacionais() {
                 <div class="frente-gauge">
                     <svg class="frente-gauge-ring" width="60" height="60">
                         <circle cx="30" cy="30" r="24" stroke="rgba(255, 255, 255, 0.05)" stroke-width="4" fill="transparent"/>
-                        <circle cx="30" cy="30" r="24" stroke="${color}" stroke-width="4" fill="transparent" stroke-dasharray="150.8" stroke-dashoffset="${offset}" style="stroke-linecap: round; box-shadow: 0 0 8px ${color}80;"/>
+                        <circle cx="30" cy="30" r="24" stroke="${color}" stroke-width="4" fill="transparent" stroke-dasharray="150.8" stroke-dashoffset="${offset}" style="stroke-linecap: round;"/>
                     </svg>
                     <span class="frente-gauge-value">${avgCompletion}%</span>
                 </div>
