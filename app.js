@@ -129,6 +129,7 @@ function setupRealtimeSync() {
         // Atualiza a UI
         updateDashboardMetrics();
         renderTasksTable();
+        updateSelectDropdowns();
         autoPopulateReportSections();
         renderReportPreview();
     }, (error) => {
@@ -168,7 +169,7 @@ function setupSettingsRealtimeSync() {
     });
 }
 
-// Atualiza os seletores HTML dinamicamente com base nas opções configuradas
+// Atualiza os seletores HTML dinamicamente com base nas opções configuradas e pilares ativos
 function updateSelectDropdowns() {
     // 1. filterResponsible (filtro da tabela)
     const filterResp = document.getElementById("filterResponsible");
@@ -210,6 +211,45 @@ function updateSelectDropdowns() {
             taskArea.appendChild(opt);
         });
         taskArea.value = currentValue;
+    }
+
+    // 4. filterPilar (filtro de pilares ativo no dashboard)
+    const filterPilar = document.getElementById("filterPilar");
+    if (filterPilar) {
+        const currentValue = filterPilar.value;
+        filterPilar.innerHTML = '<option value="">Pilar: Todos</option>';
+        
+        // Obtém pilares reais das tarefas ou usa padrão da N8N
+        const pilars = [...new Set(tasksList.map(t => t.pilar).filter(Boolean))];
+        const pilarList = pilars.length > 0 ? pilars : ["Segurança da Informação", "Processos / Lean"];
+        
+        pilarList.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            filterPilar.appendChild(opt);
+        });
+        filterPilar.value = currentValue;
+    }
+
+    // 5. taskPilar (pilar no formulário modal)
+    const taskPilar = document.getElementById("taskPilar");
+    if (taskPilar) {
+        const currentValue = taskPilar.value;
+        taskPilar.innerHTML = '<option value="" disabled selected>Selecione um pilar GRC</option>';
+        
+        const pilars = [...new Set(tasksList.map(t => t.pilar).filter(Boolean))];
+        const pilarList = pilars.length > 0 ? pilars : ["Segurança da Informação", "Processos / Lean"];
+        
+        pilarList.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            taskPilar.appendChild(opt);
+        });
+        if (currentValue) {
+            taskPilar.value = currentValue;
+        }
     }
 }
 
@@ -920,11 +960,9 @@ function renderCharts() {
         }
     });
 
-    // Bar Chart: Status por Pilar GRC
-    const pilarList = [
-        "Segurança da Informação", "ISO 27001", "ISO 9001", 
-        "Auditoria Interna", "Privacidade / LGPD", "Processos / Lean", "Conscientização"
-    ];
+    // Bar Chart: Status por Pilar GRC (gerado dinamicamente das tarefas reais)
+    const activePilars = [...new Set(tasksList.map(t => t.pilar).filter(Boolean))];
+    const pilarList = activePilars.length > 0 ? activePilars : ["Segurança da Informação", "Processos / Lean"];
     
     const pilarData = pilarList.map(pilar => {
         const pilarTasks = tasksList.filter(t => t.pilar === pilar);
