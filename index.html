@@ -49,13 +49,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                Controle Operacional (CRUD)
-            </button>
-            <button class="tab-btn" data-tab="report">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-                Relatório de Ciclo
+                Analítico
             </button>
             <button class="tab-btn" data-tab="settings">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -255,17 +249,8 @@
             <section id="tab-activities" class="tab-content">
                 <div class="section-header">
                     <div class="section-title-wrapper">
-                        <h1>Registro Geral GRC</h1>
-                        <p>Controle de evidências, auditoria e prazos contratuais</p>
-                    </div>
-                    
-                    <div style="display: flex; gap: 0.75rem;">
-                        <button id="btnExportExcel" class="btn-secondary">
-                            📥 Exportar Excel
-                        </button>
-                        <button id="btnNewActivity" class="btn-primary">
-                            ➕ Nova Atividade
-                        </button>
+                        <h1>Painel Analítico GRC</h1>
+                        <p>Visão analítica consolidada das iniciativas de conformidade e governança</p>
                     </div>
                 </div>
 
@@ -295,71 +280,7 @@
                 </div>
             </section>
 
-            <!-- ==========================================
-                 ABA 3: RELATÓRIO DO VP (GERAÇÃO NARRATIVA)
-                 ========================================== -->
-            <section id="tab-report" class="tab-content">
-                <div class="section-header">
-                    <div class="section-title-wrapper">
-                        <h1>Gerador de Reporte do VP</h1>
-                        <p>Síntese executiva formatada para apresentações de diretoria</p>
-                    </div>
-                </div>
 
-                <div class="report-layout">
-                    <!-- Editor do Report -->
-                    <div class="editor-card">
-                        <div class="editor-section">
-                            <div class="editor-section-title">📝 Resumo Geral do Ciclo</div>
-                            <textarea id="repNarrative" class="form-control" style="min-height: 90px;"></textarea>
-                        </div>
-                        
-                        <div class="editor-section">
-                            <div class="editor-section-title">✅ Principais Entregas Consolidadas</div>
-                            <textarea id="repDeliveries" class="form-control" style="min-height: 90px;"></textarea>
-                        </div>
-
-                        <div class="editor-section">
-                            <div class="editor-section-title">⚡ Demandas em Execução de Alta Visibilidade</div>
-                            <textarea id="repOngoing" class="form-control" style="min-height: 90px;"></textarea>
-                        </div>
-
-                        <div class="editor-section">
-                            <div class="editor-section-title">⚠️ Riscos e Ações Corretivas Necessárias</div>
-                            <textarea id="repAttention" class="form-control" style="min-height: 90px;"></textarea>
-                        </div>
-
-                        <div class="editor-section">
-                            <div class="editor-section-title">🚀 Próximos Passos Estratégicos</div>
-                            <textarea id="repNextSteps" class="form-control" style="min-height: 90px;"></textarea>
-                        </div>
-
-                        <div class="editor-section">
-                            <div class="editor-section-title">💡 Direcionamentos Requeridos do VP</div>
-                            <textarea id="repNeeds" class="form-control" style="min-height: 80px;"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Visualização Premium -->
-                    <div class="preview-card">
-                        <div class="chart-title">
-                            Visualização da Ata Executiva
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button id="btnCopyReport" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
-                                    Copiar
-                                </button>
-                                <button id="btnDownloadReport" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; box-shadow: none;">
-                                    Baixar TXT
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="report-document" id="reportPreviewDoc">
-                            <!-- Preenchido via JS -->
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <!-- ==========================================
                  ABA 4: CONFIGURAÇÕES E BANCO CLOUD
@@ -425,132 +346,101 @@
     </div>
 
     <!-- ==========================================
-         GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) PARA CRUD
+         MODAL PREMIUM DE DETALHAMENTO DE ATIVIDADE (SOMENTE LEITURA)
          ========================================== -->
-    <div id="execDrawerBackdrop" class="exec-drawer-backdrop"></div>
-    <aside id="activityDrawer" class="exec-drawer">
-        <div class="drawer-header">
-            <div class="drawer-title-wrapper">
-                <span id="drawerTitle" class="drawer-title">Nova Atividade</span>
-                <span id="drawerSubtitle" class="drawer-subtitle">Cadastro de Iniciativa GRC</span>
+    <div id="detailModalBackdrop" class="detail-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalActivityTitle">
+        <div class="detail-modal-panel">
+            <!-- Header do Modal -->
+            <div class="detail-modal-header">
+                <div class="detail-modal-header-left">
+                    <span id="modalActivityId" class="detail-modal-id-badge">AT-001</span>
+                    <div>
+                        <h2 id="modalActivityTitle" class="detail-modal-title">Detalhes da Atividade</h2>
+                        <span id="modalActivityPilar" class="detail-modal-pilar-label"></span>
+                    </div>
+                </div>
+                <button class="btn-close-modal" id="btnCloseModal" title="Fechar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.25rem; height: 1.25rem;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-            <button class="btn-close-modal" id="btnCloseDrawer" title="Fechar Gaveta">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.25rem; height: 1.25rem;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-        
-        <form id="activityForm" style="display: flex; flex-direction: column; height: calc(100% - 73px);">
-            <input type="hidden" id="taskDocId">
-            <div class="drawer-body">
-                <div class="form-grid">
-                    <!-- ID da Atividade -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskID">ID da Atividade</label>
-                        <input type="text" id="taskID" class="form-control" placeholder="Ex: AT-008" required>
-                    </div>
-                    
-                    <!-- Pilar GRC -->
-                    <!-- Pilar GRC -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskPilar">Pilar GRC</label>
-                        <select id="taskPilar" class="form-control" required></select>
-                    </div>
 
-                    <!-- Atividade -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskAtividade">Atividade</label>
-                        <input type="text" id="taskAtividade" class="form-control" placeholder="Descrição resumida" required>
+            <!-- Corpo do Modal -->
+            <div class="detail-modal-body">
+                <!-- Status + Prioridade + Progresso -->
+                <div class="detail-modal-status-row">
+                    <div class="detail-stat-chip">
+                        <span class="detail-stat-label">Status</span>
+                        <span id="modalStatus" class="badge-status in-progress">Em andamento</span>
                     </div>
-
-                    <!-- Área Cliente -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskArea">Área Cliente</label>
-                        <input type="text" id="taskArea" class="form-control" placeholder="Ex: TI" required>
+                    <div class="detail-stat-chip">
+                        <span class="detail-stat-label">Prioridade</span>
+                        <span id="modalPriority" class="badge-priority medium">Média</span>
                     </div>
-
-                    <!-- Responsável -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskResponsible">Responsável</label>
-                        <input type="text" id="taskResponsible" class="form-control" placeholder="Ex: Marcos" required>
-                    </div>
-
-                    <!-- Prioridade -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskPriority">Prioridade</label>
-                        <select id="taskPriority" class="form-control" required>
-                            <option value="Alta">Alta</option>
-                            <option value="Média">Média</option>
-                            <option value="Baixa">Baixa</option>
-                        </select>
-                    </div>
-
-                    <!-- Status -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskStatus">Status</label>
-                        <select id="taskStatus" class="form-control" required>
-                            <option value="Não iniciado">Não iniciado</option>
-                            <option value="Em andamento">Em andamento</option>
-                            <option value="Concluído">Concluído</option>
-                            <option value="Atrasado">Atrasado</option>
-                            <option value="Bloqueado">Bloqueado</option>
-                        </select>
-                    </div>
-
-                    <!-- Início -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskStart">Data de Início</label>
-                        <input type="date" id="taskStart" class="form-control" required>
-                    </div>
-
-                    <!-- Prazo -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskDeadline">Prazo (Fim)</label>
-                        <input type="date" id="taskDeadline" class="form-control" required>
-                    </div>
-
-                    <!-- % Concluído -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskPercent">Progresso (% Concluído)</label>
-                        <input type="number" id="taskPercent" class="form-control" min="0" max="100" required>
-                    </div>
-
-                    <!-- Entregável -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskDeliverable">Entregável / Evidência</label>
-                        <input type="text" id="taskDeliverable" class="form-control" placeholder="Evidência gerada">
-                    </div>
-
-                    <!-- Observações -->
-                    <div class="form-group">
-                        <label class="form-label" for="taskNotes">Observações</label>
-                        <textarea id="taskNotes" class="form-control" placeholder="Detalhes operacionais, bloqueios..."></textarea>
+                    <div class="detail-stat-chip" style="flex: 1;">
+                        <span class="detail-stat-label">Progresso</span>
+                        <div class="detail-progress-wrapper">
+                            <div class="progress-track" style="flex: 1; height: 8px;">
+                                <div id="modalProgressFill" class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span id="modalProgressText" class="progress-text" style="font-size: 0.85rem; font-weight: 700;">0%</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- SEÇÃO OPERACIONAL: CHECKLIST (PLANNER) -->
-                <div id="drawerChecklistSection" class="drawer-section" style="display: none; margin-top: 1rem;">
-                    <span class="drawer-section-title">📝 Subtarefas e Checklist (Planner)</span>
-                    <div id="drawerChecklistList" class="drawer-checklist-list">
+                <!-- Grid de Informações Estruturais -->
+                <div class="detail-modal-info-grid">
+                    <div class="detail-info-card">
+                        <span class="detail-info-label">👤 Responsável</span>
+                        <span id="modalResponsible" class="detail-info-value">—</span>
+                    </div>
+                    <div class="detail-info-card">
+                        <span class="detail-info-label">🏢 Área Cliente</span>
+                        <span id="modalArea" class="detail-info-value">—</span>
+                    </div>
+                    <div class="detail-info-card">
+                        <span class="detail-info-label">📅 Início</span>
+                        <span id="modalStart" class="detail-info-value">—</span>
+                    </div>
+                    <div class="detail-info-card">
+                        <span class="detail-info-label">⏰ Prazo</span>
+                        <span id="modalDeadline" class="detail-info-value">—</span>
+                    </div>
+                </div>
+
+                <!-- Entregável / Evidência -->
+                <div id="modalDeliverableSection" class="detail-modal-section">
+                    <span class="detail-section-title">📦 Entregável / Evidência</span>
+                    <p id="modalDeliverable" class="detail-section-text">—</p>
+                </div>
+
+                <!-- Observações -->
+                <div id="modalNotesSection" class="detail-modal-section">
+                    <span class="detail-section-title">📋 Observações e Bloqueios</span>
+                    <p id="modalNotes" class="detail-section-text">—</p>
+                </div>
+
+                <!-- Checklist do Planner -->
+                <div id="modalChecklistSection" class="detail-modal-section" style="display: none;">
+                    <span class="detail-section-title">✅ Subtarefas e Checklist (Planner)</span>
+                    <div id="modalChecklistList" class="drawer-checklist-list">
                         <!-- Populado dinamicamente -->
                     </div>
                 </div>
             </div>
-            
-            <div class="drawer-footer">
-                <button type="button" class="btn-danger-outline" id="btnDeleteFromDrawer" style="margin-right: auto; display: none;">
-                    Excluir Atividade
-                </button>
-                <button type="button" class="btn-secondary" id="btnCancelDrawer">Cancelar</button>
-                <button type="submit" class="btn-primary">Salvar Alterações</button>
+
+            <!-- Footer do Modal -->
+            <div class="detail-modal-footer">
+                <span class="detail-modal-readonly-badge">🔒 Modo Somente Leitura — Dados sincronizados via Microsoft Teams / Planner</span>
+                <button type="button" class="btn-secondary" id="btnCloseModalFooter">Fechar</button>
             </div>
-        </form>
-    </aside>
+        </div>
+    </div>
 
     <!-- CARREGAMENTO DE BIBLIOTECAS VIA CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
     
     <!-- Motor JavaScript da Aplicação -->
     <script type="module" src="app.js"></script>

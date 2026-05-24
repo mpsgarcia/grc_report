@@ -4,8 +4,7 @@ import { firebaseConfig } from './firebase-config.js';
 // IMPORTAÇÃO DOS MÓDULOS DO SDK DO FIREBASE VIA CDN (ES MODULES)
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { 
-    getFirestore, collection, addDoc, getDocs, onSnapshot, 
-    doc, updateDoc, deleteDoc, writeBatch, setDoc 
+    getFirestore, collection, onSnapshot
 } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 // DADOS OPERACIONAIS: Todos os dados de tarefas são consumidos diretamente em tempo real do Firebase Firestore
@@ -16,20 +15,7 @@ let db = null;
 let tasksList = [];
 let chartStatusObj = null;
 let chartPilarObj = null;
-let filterSlaOnly = false; // Estado customizado para filtro de SLA falho (Atrasados + Bloqueados)
-
-// DADOS OPERACIONAIS DE METADADOS: Todos os responsáveis e áreas são extraídos em tempo real a partir das tarefas do Firestore
-
-// Lógica de controle do Editor do Relatório
-const reportEditorState = {
-    narrative: "",
-    deliveries: "",
-    ongoing: "",
-    attention: "",
-    nextSteps: "",
-    needs: "• Aprovação do VP para início do planejamento do treinamento de conscientização ao DPO.\n• Definição de data para alinhamento sobre o plano corretivo da NC-12.",
-    recognitions: "• Destaque ao Time de Processos pela entrega da comunicação MEC dentro do prazo estabelecido."
-};
+let filterSlaOnly = false;
 
 // 1. INICIALIZAÇÃO E CONEXÃO COM O FIREBASE FIRESTORE
 function initFirebase() {
@@ -125,8 +111,6 @@ function setupRealtimeSync() {
         updateDashboardMetrics();
         renderTasksTable();
         updateSelectDropdowns();
-        autoPopulateReportSections();
-        renderReportPreview();
     }, (error) => {
         console.error("Erro no sincronismo do Firestore:", error);
     });
@@ -450,13 +434,13 @@ function renderTasksTable() {
         }
     }
 
-    // 4.2 Renderiza Tabela CRUD Geral (crudTableBody)
+    // 4.2 Renderiza Tabela Analítica (crudTableBody)
     const crudTbody = document.getElementById("crudTableBody");
     if (crudTbody) {
         if (tasksList.length === 0) {
             crudTbody.innerHTML = `
                 <tr>
-                    <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                         Nenhuma atividade cadastrada no banco.
                     </td>
                 </tr>
@@ -469,17 +453,19 @@ function renderTasksTable() {
                 row.setAttribute("data-docid", task.docId);
                 
                 // Formata data do prazo
-                const dateParts = task.prazo.split("-");
-                const formattedDeadline = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : task.prazo;
+                const dateParts = (task.prazo || "").split("-");
+                const formattedDeadline = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : (task.prazo || "");
+                const startParts = (task.inicio || "").split("-");
+                const formattedStart = startParts.length === 3 ? `${startParts[2]}/${startParts[1]}/${startParts[0]}` : (task.inicio || "");
 
                 // Classificação estilizada dos Pilares
                 let pilarClass = "seg-inf";
-                if (task.pilar.includes("LGPD") || task.pilar.includes("Privacidade")) pilarClass = "lgpd";
-                else if (task.pilar.includes("27001")) pilarClass = "iso27";
-                else if (task.pilar.includes("9001")) pilarClass = "iso90";
-                else if (task.pilar.includes("Auditoria")) pilarClass = "aud-int";
-                else if (task.pilar.includes("Lean") || task.pilar.includes("Processos")) pilarClass = "lean";
-                else if (task.pilar.includes("Conscientização")) pilarClass = "conscientizacao";
+                if ((task.pilar || "").includes("LGPD") || (task.pilar || "").includes("Privacidade")) pilarClass = "lgpd";
+                else if ((task.pilar || "").includes("27001")) pilarClass = "iso27";
+                else if ((task.pilar || "").includes("9001")) pilarClass = "iso90";
+                else if ((task.pilar || "").includes("Auditoria")) pilarClass = "aud-int";
+                else if ((task.pilar || "").includes("Lean") || (task.pilar || "").includes("Processos")) pilarClass = "lean";
+                else if ((task.pilar || "").includes("Conscientização")) pilarClass = "conscientizacao";
 
                 // Classificação dos Status
                 let statusClass = "in-progress";
@@ -495,59 +481,25 @@ function renderTasksTable() {
 
                 row.innerHTML = `
                     <td class="cell-id">${task.id}</td>
-                    <td><span class="badge-pilar ${pilarClass}">${task.pilar}</span></td>
-                    <td class="cell-activity" title="${task.atividade}">${task.atividade}</td>
-                    <td>${task.areaCliente}</td>
-                    <td>${task.responsavel}</td>
-                    <td><span class="badge-priority ${priorityClass}">${task.prioridade}</span></td>
-                    <td><span class="badge-status ${statusClass}">${task.status}</span></td>
+                    <td><span class="badge-pilar ${pilarClass}">${task.pilar || ""}</span></td>
+                    <td class="cell-activity" title="${task.atividade || ""}">${task.atividade || ""}</td>
+                    <td>${task.areaCliente || ""}</td>
+                    <td>${task.responsavel || ""}</td>
+                    <td><span class="badge-priority ${priorityClass}">${task.prioridade || ""}</span></td>
+                    <td><span class="badge-status ${statusClass}">${task.status || ""}</span></td>
                     <td>${formattedDeadline}</td>
                     <td>
                         <div class="progress-bar-wrapper">
                             <div class="progress-track">
-                                <div class="progress-fill" style="width: ${task.percentualConcluido}%"></div>
+                                <div class="progress-fill" style="width: ${task.percentualConcluido || 0}%"></div>
                             </div>
-                            <span class="progress-text">${task.percentualConcluido}%</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon edit" title="Editar Atividade" data-docid="${task.docId}">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
-                            </button>
-                            <button class="btn-icon delete" title="Excluir Atividade" data-docid="${task.docId}">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-1.802a2.25 2.25 0 0 0-2.25-2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.802" /></svg>
-                            </button>
+                            <span class="progress-text">${task.percentualConcluido || 0}%</span>
                         </div>
                     </td>
                 `;
 
-                // Clique na linha
-                row.addEventListener("click", (e) => {
-                    if (e.target.closest(".actions-cell") || e.target.closest("button")) {
-                        return;
-                    }
-                    openEditDrawer(task.docId);
-                });
-
-                // Botão de editar
-                row.querySelector(".btn-icon.edit").addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    openEditDrawer(task.docId);
-                });
-
-                // Botão de excluir
-                row.querySelector(".btn-icon.delete").addEventListener("click", async (e) => {
-                    e.stopPropagation();
-                    if (confirm(`Deseja realmente excluir a atividade "${task.id} - ${task.atividade}"?`)) {
-                        try {
-                            await deleteDoc(doc(db, "activities", task.docId));
-                            console.log("Atividade excluída!");
-                        } catch (err) {
-                            alert("Erro ao excluir do Firebase: " + err.message);
-                        }
-                    }
-                });
+                // Clique na linha abre modal de detalhes (somente leitura)
+                row.addEventListener("click", () => openDetailModal(task.docId));
 
                 crudTbody.appendChild(row);
             });
@@ -1050,96 +1002,69 @@ function exportToExcel() {
     }
 }
 
-// Função para limpar todas as atividades do Firestore
-async function handleClearAllActivities() {
-    if (!confirm("🚨 ATENÇÃO: Esta ação é irreversível e excluirá permanentemente todas as atividades cadastradas no Firestore. Deseja continuar?")) {
-        return;
-    }
 
-    if (db === null) {
-        alert("Não é possível limpar o banco de dados enquanto o Firebase estiver offline.");
-        return;
-    }
-
-    try {
-        const batch = writeBatch(db);
-        tasksList.forEach(t => {
-            const docRef = doc(db, "activities", t.docId);
-            batch.delete(docRef);
-        });
-        await batch.commit();
-        alert("Sucesso: Todas as atividades foram excluídas permanentemente do banco de dados na nuvem!");
-    } catch (err) {
-        console.error("Erro ao limpar banco de dados:", err);
-        alert("Erro ao excluir dados: " + err.message);
-    }
-}
-
-
-// 8. CONTROLES DA GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) E FORMULÁRIO (CRUD)
-const drawer = document.getElementById("activityDrawer");
-const drawerBackdrop = document.getElementById("execDrawerBackdrop");
-const form = document.getElementById("activityForm");
-
-function openNewActivityDrawer() {
-    if (form) form.reset();
-    document.getElementById("taskDocId").value = "";
-    document.getElementById("drawerTitle").innerText = "Nova Atividade";
-    document.getElementById("drawerSubtitle").innerText = "Cadastro de Iniciativa GRC";
-    
-    // Oculta botão de excluir no modal de cadastro
-    document.getElementById("btnDeleteFromDrawer").style.display = "none";
-    document.getElementById("drawerChecklistSection").style.display = "none";
-    
-    // Auto-calcula o próximo ID sequencial
-    let nextNum = 1;
-    if (tasksList.length > 0) {
-        const ids = tasksList.map(t => parseInt(t.id.replace("AT-", ""))).filter(n => !isNaN(n));
-        if (ids.length > 0) nextNum = Math.max(...ids) + 1;
-    }
-    document.getElementById("taskID").value = `AT-${String(nextNum).padStart(3, '0')}`;
-    document.getElementById("taskID").disabled = false;
-    
-    // Padrão de data (hoje)
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("taskStart").value = today;
-    document.getElementById("taskDeadline").value = today;
-    document.getElementById("taskPercent").value = 0;
-
-    if (drawer) drawer.classList.add("active");
-    if (drawerBackdrop) drawerBackdrop.classList.add("active");
-}
-
-function openEditDrawer(docId) {
+// 8. MODAL DE DETALHES PREMIUM (SOMENTE LEITURA)
+function openDetailModal(docId) {
     const task = tasksList.find(t => t.docId === docId);
     if (!task) return;
 
-    document.getElementById("taskDocId").value = docId;
-    document.getElementById("drawerTitle").innerText = "Editar Atividade";
-    document.getElementById("drawerSubtitle").innerText = `Detalhes da Demanda ${task.id}`;
-    
-    // Exibe o botão de excluir no modal de edição
-    document.getElementById("btnDeleteFromDrawer").style.display = "flex";
-    
-    document.getElementById("taskID").value = task.id;
-    document.getElementById("taskID").disabled = true; // ID vira apenas de leitura
-    
-    document.getElementById("taskPilar").value = task.pilar;
-    document.getElementById("taskAtividade").value = task.atividade;
-    document.getElementById("taskArea").value = task.areaCliente;
-    document.getElementById("taskResponsible").value = task.responsavel;
-    document.getElementById("taskPriority").value = task.prioridade;
-    document.getElementById("taskStatus").value = task.status;
-    document.getElementById("taskStart").value = task.inicio;
-    document.getElementById("taskDeadline").value = task.prazo;
-    document.getElementById("taskPercent").value = task.percentualConcluido;
-    document.getElementById("taskDeliverable").value = task.entregavel || "";
-    document.getElementById("taskNotes").value = task.observacoes || "";
+    // Popula o cabeçalho
+    document.getElementById("modalActivityId").textContent = task.id || "";
+    document.getElementById("modalActivityTitle").textContent = task.atividade || "Sem título";
+    document.getElementById("modalActivityPilar").textContent = task.pilar || "";
 
-    // Carrega seção de Checklist operacional obtida do MS Planner via N8N
-    const checklistSection = document.getElementById("drawerChecklistSection");
-    const checklistList = document.getElementById("drawerChecklistList");
+    // Status badge
+    const modalStatus = document.getElementById("modalStatus");
+    if (modalStatus) {
+        let statusClass = "in-progress";
+        if (task.status === "Não iniciado") statusClass = "not-started";
+        else if (task.status === "Concluído") statusClass = "completed";
+        else if (task.status === "Atrasado") statusClass = "delayed";
+        else if (task.status === "Bloqueado") statusClass = "blocked";
+        modalStatus.className = `badge-status ${statusClass}`;
+        modalStatus.textContent = task.status || "";
+    }
+
+    // Prioridade badge
+    const modalPriority = document.getElementById("modalPriority");
+    if (modalPriority) {
+        let priorityClass = "medium";
+        if (task.prioridade === "Alta") priorityClass = "high";
+        else if (task.prioridade === "Baixa") priorityClass = "low";
+        modalPriority.className = `badge-priority ${priorityClass}`;
+        modalPriority.textContent = task.prioridade || "";
+    }
+
+    // Progresso
+    const pct = task.percentualConcluido || 0;
+    const modalProgressFill = document.getElementById("modalProgressFill");
+    const modalProgressText = document.getElementById("modalProgressText");
+    if (modalProgressFill) modalProgressFill.style.width = `${pct}%`;
+    if (modalProgressText) modalProgressText.textContent = `${pct}%`;
+
+    // Infos
+    document.getElementById("modalResponsible").textContent = task.responsavel || "—";
+    document.getElementById("modalArea").textContent = task.areaCliente || "—";
     
+    const fmtDate = (d) => {
+        if (!d) return "—";
+        const parts = d.split("-");
+        return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : d;
+    };
+    document.getElementById("modalStart").textContent = fmtDate(task.inicio);
+    document.getElementById("modalDeadline").textContent = fmtDate(task.prazo);
+
+    // Entregável
+    const delEl = document.getElementById("modalDeliverable");
+    if (delEl) delEl.textContent = task.entregavel || "Não informado";
+
+    // Observações
+    const notesEl = document.getElementById("modalNotes");
+    if (notesEl) notesEl.textContent = task.observacoes || "Sem observações registradas.";
+
+    // Checklist do Planner
+    const checklistSection = document.getElementById("modalChecklistSection");
+    const checklistList = document.getElementById("modalChecklistList");
     if (checklistSection && checklistList) {
         const checklistData = task.checklist;
         if (checklistData && Object.keys(checklistData).length > 0) {
@@ -1147,11 +1072,11 @@ function openEditDrawer(docId) {
             Object.values(checklistData).forEach(item => {
                 const div = document.createElement("div");
                 div.className = "drawer-checklist-item";
-                const isChecked = item.isChecked ? "checked" : "";
                 const checkedAttr = item.isChecked ? "checked" : "";
+                const checkedClass = item.isChecked ? "checked" : "";
                 div.innerHTML = `
                     <input type="checkbox" class="drawer-checklist-checkbox" ${checkedAttr} disabled>
-                    <span class="drawer-checklist-title ${isChecked}">${item.title}</span>
+                    <span class="drawer-checklist-title ${checkedClass}">${item.title}</span>
                 `;
                 checklistList.appendChild(div);
             });
@@ -1161,59 +1086,21 @@ function openEditDrawer(docId) {
         }
     }
 
-    if (drawer) drawer.classList.add("active");
-    if (drawerBackdrop) drawerBackdrop.classList.add("active");
-}
-
-function closeDrawer() {
-    if (drawer) drawer.classList.remove("active");
-    if (drawerBackdrop) drawerBackdrop.classList.remove("active");
-}
-
-// Submissão do Formulário (Salvar / Editar no Firestore)
-async function handleFormSubmit(e) {
-    e.preventDefault();
-
-    const docId = document.getElementById("taskDocId").value;
-    const taskData = {
-        id: document.getElementById("taskID").value,
-        pilar: document.getElementById("taskPilar").value,
-        atividade: document.getElementById("taskAtividade").value,
-        areaCliente: document.getElementById("taskArea").value,
-        responsavel: document.getElementById("taskResponsible").value,
-        prioridade: document.getElementById("taskPriority").value,
-        status: document.getElementById("taskStatus").value,
-        inicio: document.getElementById("taskStart").value,
-        prazo: document.getElementById("taskDeadline").value,
-        percentualConcluido: parseInt(document.getElementById("taskPercent").value) || 0,
-        entregavel: document.getElementById("taskDeliverable").value,
-        observacoes: document.getElementById("taskNotes").value
-    };
-
-    // Validação de regras de negócio de progresso e status
-    if (taskData.percentualConcluido === 100 && taskData.status !== "Concluído") {
-        taskData.status = "Concluído";
-    } else if (taskData.status === "Concluído" && taskData.percentualConcluido < 100) {
-        taskData.percentualConcluido = 100;
-    }
-
-    try {
-        if (docId) {
-            // Edição de Atividade Existente
-            await updateDoc(doc(db, "activities", docId), taskData);
-            console.log("Atividade atualizada no Firestore!");
-        } else {
-            // Inserção de Nova Atividade
-            await addDoc(collection(db, "activities"), taskData);
-            console.log("Nova atividade inserida no Firestore!");
-        }
-        closeDrawer();
-    } catch (err) {
-        alert("Erro ao salvar no Firebase Firestore: " + err.message);
+    // Abre o modal
+    const backdrop = document.getElementById("detailModalBackdrop");
+    if (backdrop) {
+        backdrop.classList.add("active");
+        document.body.style.overflow = "hidden";
     }
 }
 
-// 9. GERENCIAMENTO DE ABAS E EVENTOS DE TELA
+function closeDetailModal() {
+    const backdrop = document.getElementById("detailModalBackdrop");
+    if (backdrop) {
+        backdrop.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+}
 function showTab(tabName) {
     document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -1277,34 +1164,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeToggleBtn = document.getElementById("themeToggle");
     if (themeToggleBtn) themeToggleBtn.addEventListener("click", toggleTheme);
 
-    // Liga filtros de atividades da Home/CRUD
+    // Liga filtros de atividades
     const inputsToFilter = ["inputSearch", "filterStatus", "filterPilar", "filterResponsible", "filterPriority"];
     inputsToFilter.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener("input", () => {
-                filterSlaOnly = false; // Ao interagir com filtros normais, limpa o filtro exclusivo
-                filterTasks();
-            });
-            el.addEventListener("change", () => {
-                filterSlaOnly = false;
-                filterTasks();
-            });
+            el.addEventListener("input", () => { filterSlaOnly = false; filterTasks(); });
+            el.addEventListener("change", () => { filterSlaOnly = false; filterTasks(); });
         }
     });
 
-    // Liga botões CRUD da Gaveta Lateral (Drawer)
-    const btnNew = document.getElementById("btnNewActivity");
-    if (btnNew) btnNew.addEventListener("click", openNewActivityDrawer);
-    
-    const btnCloseDrw = document.getElementById("btnCloseDrawer");
-    if (btnCloseDrw) btnCloseDrw.addEventListener("click", closeDrawer);
-    
-    const btnCancelDrw = document.getElementById("btnCancelDrawer");
-    if (btnCancelDrw) btnCancelDrw.addEventListener("click", closeDrawer);
-    
-    const backdropDrw = document.getElementById("execDrawerBackdrop");
-    if (backdropDrw) backdropDrw.addEventListener("click", closeDrawer);
+    // Liga botões do Modal de Detalhes (somente leitura)
+    const btnCloseModal = document.getElementById("btnCloseModal");
+    if (btnCloseModal) btnCloseModal.addEventListener("click", closeDetailModal);
+
+    const btnCloseModalFooter = document.getElementById("btnCloseModalFooter");
+    if (btnCloseModalFooter) btnCloseModalFooter.addEventListener("click", closeDetailModal);
+
+    const detailBackdrop = document.getElementById("detailModalBackdrop");
+    if (detailBackdrop) {
+        detailBackdrop.addEventListener("click", (e) => {
+            if (e.target === detailBackdrop) closeDetailModal();
+        });
+    }
+
+    // Fecha modal com ESC
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDetailModal();
+    });
     
     // Liga botões de Drill-Down nos cards de métricas superiores
     const metricTotal = document.getElementById("metricCardTotal");
@@ -1370,49 +1257,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (radarSection) radarSection.scrollIntoView({ behavior: "smooth" });
         });
     }
-
-    if (form) form.addEventListener("submit", handleFormSubmit);
-
-    // Liga exclusão direta por dentro do Drawer lateral
-    const btnDelDrw = document.getElementById("btnDeleteFromDrawer");
-    if (btnDelDrw) {
-        btnDelDrw.addEventListener("click", async () => {
-            const docId = document.getElementById("taskDocId").value;
-            if (!docId) return;
-            const task = tasksList.find(t => t.docId === docId);
-            if (task && confirm(`Deseja realmente excluir a atividade "${task.id} - ${task.atividade}"?`)) {
-                try {
-                    await deleteDoc(doc(db, "activities", docId));
-                    console.log("Atividade excluída!");
-                    closeDrawer();
-                } catch (err) {
-                    alert("Erro ao excluir do Firebase: " + err.message);
-                }
-            }
-        });
-    }
-
-    // Liga botões do Report do VP
-    const btnCopyRep = document.getElementById("btnCopyReport");
-    if (btnCopyRep) btnCopyRep.addEventListener("click", copyReportToClipboard);
-    
-    const btnDwnRep = document.getElementById("btnDownloadReport");
-    if (btnDwnRep) btnDwnRep.addEventListener("click", downloadReportAsTxt);
-
-    // Liga listeners em tempo real nos inputs do editor do relatório
-    const editorInputs = ["repNarrative", "repDeliveries", "repOngoing", "repAttention", "repNextSteps", "repNeeds"];
-    editorInputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener("input", renderReportPreview);
-    });
-
-    // Liga botão exportar para excel
-    const btnExpXls = document.getElementById("btnExportExcel");
-    if (btnExpXls) btnExpXls.addEventListener("click", exportToExcel);
-
-    // Liga botão de limpeza geral do banco de dados (Danger Zone)
-    const btnClearAll = document.getElementById("btnClearAllActivities");
-    if (btnClearAll) btnClearAll.addEventListener("click", handleClearAllActivities);
 
     // Popula dropdowns e badges com valores padrão iniciais imediatamente
     updateSelectDropdowns();
