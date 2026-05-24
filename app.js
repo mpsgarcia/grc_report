@@ -308,27 +308,23 @@ function renderFrentesOperacionais() {
             </div>
         `;
         
-        // Drill-Down: ao clicar na frente operacional, filtra a tabela da Home diretamente e rola suave
+        // Drill-Down: ao clicar na frente, navega pra aba Radar Operacional filtrando pela área
         card.addEventListener("click", () => {
             const searchInput = document.getElementById("inputSearch");
             const filterStatus = document.getElementById("filterStatus");
             const filterPilar = document.getElementById("filterPilar");
             const filterResponsible = document.getElementById("filterResponsible");
             const filterPriority = document.getElementById("filterPriority");
-            
+
             filterSlaOnly = false;
             if (searchInput) searchInput.value = area;
             if (filterStatus) filterStatus.value = "";
             if (filterPilar) filterPilar.value = "";
             if (filterResponsible) filterResponsible.value = "";
             if (filterPriority) filterPriority.value = "";
-            
-            filterTasks();
-            
-            const radarSection = document.querySelector(".radar-operational-section");
-            if (radarSection) {
-                radarSection.scrollIntoView({ behavior: "smooth" });
-            }
+
+            showTab("activities");
+            setTimeout(filterTasks, 100);
         });
         
         listBody.appendChild(card);
@@ -529,44 +525,32 @@ function filterTasks() {
 // 5. ATUALIZAÇÃO DOS METRIC CARDS E CÁLCULO DO GRC HEALTH SCORE E RISCOS
 function updateDashboardMetrics() {
     const total = tasksList.length;
-    const completed = tasksList.filter(t => t.status === "Concluído").length;
-    const inProgress = tasksList.filter(t => t.status === "Em andamento").length;
-    
-    // SLA de Prazos (% de tarefas não atrasadas / bloqueadas)
+
+    // ── BASE: Avanço Médio, SLA, Estabilidade, Health Score (mantém modelo original) ──
     const delayedCount = tasksList.filter(t => t.status === "Atrasado" || t.status === "Bloqueado").length;
     const sla = total > 0 ? Math.round(((total - delayedCount) / total) * 100) : 100;
 
-    // Cálculo da taxa de avanço físico médio
     let sumPercentage = 0;
-    tasksList.forEach(t => sumPercentage += t.percentualConcluido);
+    tasksList.forEach(t => sumPercentage += (t.percentualConcluido || 0));
     const avgCompletion = total > 0 ? Math.round(sumPercentage / total) : 0;
 
-    // Cálculo da Taxa de Estabilidade (penaliza bloqueios com mais de 10 dias)
-    // Usamos a data de avaliação do sistema '2026-05-24' para o cálculo retrospectivo
-    const evaluationDate = new Date("2026-05-24T12:00:00");
+    const today = new Date(); today.setHours(0, 0, 0, 0);
     let severeBlocksCount = 0;
     tasksList.forEach(t => {
         if (t.status === "Bloqueado" && t.inicio) {
             const start = new Date(t.inicio + "T00:00:00");
-            const diffDays = Math.ceil((evaluationDate - start) / (1000 * 60 * 60 * 24));
-            if (diffDays > 10) {
-                severeBlocksCount++;
-            }
+            const diffDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
+            if (diffDays > 10) severeBlocksCount++;
         }
     });
     const stability = total > 0 ? Math.round(((total - severeBlocksCount) / total) * 100) : 100;
-
-    // GRC Health Score (Índice de Saúde Ponderado)
-    // 40% Avanço Médio + 40% SLA de Prazos + 20% Estabilidade
     const healthIndex = total > 0 ? Math.round((avgCompletion * 0.4) + (sla * 0.4) + (stability * 0.2)) : 0;
 
-    // Atualiza valores nos cards superiores
-    if (document.getElementById("metric-total")) document.getElementById("metric-total").innerText = total;
-    if (document.getElementById("metric-completed")) document.getElementById("metric-completed").innerText = completed;
-    if (document.getElementById("metric-progress")) document.getElementById("metric-progress").innerText = inProgress;
-    if (document.getElementById("metric-sla")) document.getElementById("metric-sla").innerText = `${sla}%`;
+    // ── KPIs ESTRATÉGICOS (substituem Total/Concluídas/EmAndamento/SLA/Velocity) ──
+    const strategicMetrics = calculateStrategicMetrics();
+    renderStrategicKPIs(strategicMetrics, healthIndex);
 
-    // Desenha o Gauge Ring do Health Score do Executive Command Card (Raio = 48, Circunferência = 301.6)
+    // ── Health Score Gauge ──
     const healthValueEl = document.getElementById("exec-health-value");
     const healthRingEl = document.getElementById("exec-health-ring");
     if (healthValueEl && healthRingEl) {
@@ -576,54 +560,373 @@ function updateDashboardMetrics() {
         healthRingEl.style.strokeDashoffset = offset;
     }
 
-    // Identifica o Pilar GRC mais ativo (com mais tarefas)
-    let pilarCounts = {};
-    tasksList.forEach(t => {
-        pilarCounts[t.pilar] = (pilarCounts[t.pilar] || 0) + 1;
+    // ── Executive Summary (BLUF + 3 Highlights RAG) ──
+    updateExecutiveSummary({
+        healthIndex,
+        total,
+        delayedCount,
+        severeBlocksCount,
+        avgCompletion,
+        stability,
+        strategicMetrics
     });
-    let topPilar = "Nenhum";
-    let maxTasks = 0;
-    for (const [pilar, count] of Object.entries(pilarCounts)) {
-        if (count > maxTasks) {
-            maxTasks = count;
-            topPilar = pilar;
-        }
-    }
 
-    // Atualiza o Diagnóstico Estrutural de Governança
-    const execSummaryTitle = document.getElementById("exec-summary-title");
-    const execSummaryText = document.getElementById("exec-summary-text");
-    if (execSummaryTitle && execSummaryText) {
-        let healthLabel = "Ação Requerida ⚠️";
-        if (healthIndex >= 80) healthLabel = "Excelente Desempenho 🚀";
-        else if (healthIndex >= 60) healthLabel = "Saúde Estável e Controlada 🛡️";
-        
-        execSummaryTitle.innerText = `Diagnóstico de Governança: ${healthLabel}`;
-        
-        let diagnosticText = `O programa de governança apresenta um índice de **Saúde Geral de ${healthIndex}%** com avanço físico médio de **${avgCompletion}%** e estabilidade de prazos de **${stability}%**. `;
-        if (delayedCount > 0) {
-            diagnosticText += `Detectamos **${delayedCount} gargalo(s) ativo(s)** (atrasos ou bloqueios). `;
-            if (severeBlocksCount > 0) {
-                diagnosticText += `Com **${severeBlocksCount} impedimento(s) severo(s)** ultrapassando o limite técnico de 10 dias. Recomenda-se direcionamento estratégico imediato. `;
-            } else {
-                diagnosticText += `Recomenda-se alinhamento de prioridades para evitar escalonamento. `;
-            }
-        } else {
-            diagnosticText += `Todas as iniciativas estão dentro do esperado, sem nenhum impedimento operacional ou desvio crítico de prazo no momento. `;
-        }
-        diagnosticText += `A maior concentração de iniciativas está no pilar **${topPilar}** (representando ${Math.round((maxTasks / (total || 1)) * 100)}% do portfólio total).`;
-        
-        execSummaryText.innerHTML = diagnosticText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    }
-
-    // Popula a sidebar de Gargalos Crônicos e Bloqueios
+    // ── Blocos auxiliares ──
+    populateVPActionRequired();
     populateRiskHeatmap();
-    
-    // Popula frentes operacionais (cards de áreas)
+    populateTopMilestones();
+    populateWorkload();
+    populatePilarMaturity();
     renderFrentesOperacionais();
-
-    // Atualiza os Gráficos
     renderCharts();
+
+    // Sprint 2: Matriz de Risco 2×2 precisa de tagging Impacto×Probabilidade nas tasks.
+    // Por ora ocultar pra não exibir "0 0 0 0" enganoso.
+    const riskMatrixCard = document.querySelector(".rq-grid-2x2");
+    if (riskMatrixCard) {
+        const parentCard = riskMatrixCard.closest(".card-sidebar-exec");
+        if (parentCard) parentCard.style.display = "none";
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.A KPIs ESTRATÉGICOS — cálculo
+// ─────────────────────────────────────────────────────────
+function calculateStrategicMetrics() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
+    // 1. Aderência ao Plano: das planejadas pra semana, quantas estão concluídas
+    const planejadas = tasksList.filter(t => t.isPlanejamentoSemana === true || t.status === "Planejada");
+    const planejadasConcluidas = planejadas.filter(t => t.status === "Concluído").length;
+    const adherence = planejadas.length > 0
+        ? Math.round((planejadasConcluidas / planejadas.length) * 100)
+        : null; // null = sem plano cadastrado
+
+    // 2. Throughput 7D: entregas concluídas nos últimos 7 dias corridos
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    const throughput7d = tasksList.filter(t => {
+        if (t.status !== "Concluído" || !t.completedDateTime) return false;
+        const completedDate = new Date(t.completedDateTime + "T00:00:00");
+        return completedDate >= sevenDaysAgo && completedDate <= today;
+    }).length;
+
+    // 3. Lead Time Médio: dias entre inicio e completedDateTime das concluídas
+    const concluidasComDatas = tasksList.filter(t =>
+        t.status === "Concluído" && t.inicio && t.completedDateTime
+    );
+    let leadTimeAvg = null;
+    if (concluidasComDatas.length > 0) {
+        const totalDays = concluidasComDatas.reduce((sum, t) => {
+            const start = new Date(t.inicio + "T00:00:00");
+            const end = new Date(t.completedDateTime + "T00:00:00");
+            const diff = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+            return sum + diff;
+        }, 0);
+        leadTimeAvg = Math.round(totalDays / concluidasComDatas.length);
+    }
+
+    // 4. Aging de Bloqueios: dias médios desde inicio das tarefas bloqueadas
+    const bloqueadas = tasksList.filter(t => t.status === "Bloqueado" && t.inicio);
+    let agingAvg = null;
+    if (bloqueadas.length > 0) {
+        const totalAging = bloqueadas.reduce((sum, t) => {
+            const start = new Date(t.inicio + "T00:00:00");
+            return sum + Math.max(0, Math.ceil((today - start) / (1000 * 60 * 60 * 24)));
+        }, 0);
+        agingAvg = Math.round(totalAging / bloqueadas.length);
+    }
+
+    return {
+        adherence,
+        adherenceDetail: planejadas.length > 0 ? `${planejadasConcluidas}/${planejadas.length}` : "—",
+        throughput7d,
+        leadTimeAvg,
+        leadTimeSample: concluidasComDatas.length,
+        agingAvg,
+        agingSample: bloqueadas.length
+    };
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.B KPIs ESTRATÉGICOS — render
+// ─────────────────────────────────────────────────────────
+function renderStrategicKPIs(metrics, healthIndex) {
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+    };
+
+    setText("metric-adherence", metrics.adherence === null ? "—" : `${metrics.adherence}%`);
+    setText("metric-throughput", `${metrics.throughput7d}`);
+    setText("metric-leadtime", metrics.leadTimeAvg === null ? "—" : `${metrics.leadTimeAvg}d`);
+    setText("metric-aging", metrics.agingAvg === null ? "0d" : `${metrics.agingAvg}d`);
+    setText("metric-healthscore", `${healthIndex}%`);
+
+    // Footers contextuais
+    const adherenceFooter = document.querySelector("#metricCardAdherence .metric-footer");
+    if (adherenceFooter) adherenceFooter.innerHTML = metrics.adherence === null
+        ? "Nenhuma demanda no bucket Planejamento da Semana"
+        : `${metrics.adherenceDetail} planejadas concluídas`;
+
+    const agingFooter = document.querySelector("#metricCardAging .metric-footer");
+    if (agingFooter) agingFooter.innerHTML = metrics.agingSample === 0
+        ? "Nenhum bloqueio ativo ✅"
+        : `Média de ${metrics.agingSample} bloqueio(s) ativo(s)`;
+
+    const leadTimeFooter = document.querySelector("#metricCardLeadtime .metric-footer");
+    if (leadTimeFooter && metrics.leadTimeSample > 0) {
+        leadTimeFooter.innerHTML = `Baseado em ${metrics.leadTimeSample} entrega(s) finalizada(s)`;
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.C EXECUTIVE SUMMARY — BLUF + 3 Highlights RAG
+// ─────────────────────────────────────────────────────────
+function updateExecutiveSummary({ healthIndex, total, delayedCount, severeBlocksCount, avgCompletion, stability, strategicMetrics }) {
+    const titleEl = document.getElementById("exec-summary-title");
+    const highlightsEl = document.getElementById("exec-highlights");
+    const textEl = document.getElementById("exec-summary-text");
+
+    if (!titleEl || !highlightsEl || !textEl) return;
+
+    // ── BLUF: 1 frase headline, status-driven ──
+    let healthLabel, statusEmoji;
+    if (healthIndex >= 80) { healthLabel = "EXCELENTE"; statusEmoji = "🚀"; }
+    else if (healthIndex >= 60) { healthLabel = "SAUDÁVEL"; statusEmoji = "🛡️"; }
+    else if (healthIndex >= 40) { healthLabel = "ATENÇÃO"; statusEmoji = "⚠️"; }
+    else { healthLabel = "CRÍTICO"; statusEmoji = "🚨"; }
+
+    let bluf;
+    if (total === 0) {
+        bluf = "Aguardando carga inicial de demandas no Firestore.";
+    } else if (severeBlocksCount > 0) {
+        bluf = `Programa em ${healthLabel} ${statusEmoji}: ${severeBlocksCount} bloqueio(s) crítico(s) há +10 dias exige(m) intervenção do VP.`;
+    } else if (delayedCount > 0) {
+        bluf = `Programa em ${healthLabel} ${statusEmoji}: ${delayedCount} gargalo(s) ativo(s) sob monitoramento.`;
+    } else if (healthIndex >= 80) {
+        bluf = `Programa em ${healthLabel} ${statusEmoji}: ciclo sem impedimentos, ${avgCompletion}% de avanço médio.`;
+    } else {
+        bluf = `Programa em ${healthLabel} ${statusEmoji}: ${avgCompletion}% de avanço médio, sem bloqueios críticos.`;
+    }
+    titleEl.innerText = bluf;
+
+    // ── 3 Highlights RAG ──
+    const highlights = [];
+
+    // Highlight 1: Bloqueios / Atrasos
+    if (severeBlocksCount > 0) {
+        highlights.push({ color: "red", label: `${severeBlocksCount} bloqueio(s) há +10 dias` });
+    } else if (delayedCount > 0) {
+        highlights.push({ color: "amber", label: `${delayedCount} ação(ões) em atraso ou bloqueio` });
+    } else {
+        highlights.push({ color: "green", label: "Sem bloqueios ou atrasos" });
+    }
+
+    // Highlight 2: Aderência ao Plano
+    if (strategicMetrics.adherence === null) {
+        highlights.push({ color: "amber", label: "Plano da semana sem demandas cadastradas" });
+    } else if (strategicMetrics.adherence >= 80) {
+        highlights.push({ color: "green", label: `Aderência ao plano: ${strategicMetrics.adherence}%` });
+    } else if (strategicMetrics.adherence >= 50) {
+        highlights.push({ color: "amber", label: `Aderência ao plano: ${strategicMetrics.adherence}%` });
+    } else {
+        highlights.push({ color: "red", label: `Aderência ao plano: ${strategicMetrics.adherence}%` });
+    }
+
+    // Highlight 3: Throughput 7D
+    if (strategicMetrics.throughput7d === 0) {
+        highlights.push({ color: "amber", label: "Sem entregas nos últimos 7 dias" });
+    } else {
+        highlights.push({ color: "green", label: `${strategicMetrics.throughput7d} entrega(s) nos últimos 7d` });
+    }
+
+    highlightsEl.innerHTML = highlights.map(h =>
+        `<span class="exec-highlight-chip ${h.color}"><span class="chip-dot"></span>${h.label}</span>`
+    ).join("");
+
+    // ── Subtítulo subtle (não duplica o BLUF) ──
+    let subtitle = `Saúde composta: ${avgCompletion}% avanço · ${100 - severeBlocksCount * 5}% estabilidade · base de ${total} demanda(s).`;
+    if (total === 0) subtitle = "—";
+    textEl.innerHTML = subtitle;
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.D AÇÃO REQUERIDA DO VP — popula o vpAlertBlock
+// ─────────────────────────────────────────────────────────
+function populateVPActionRequired() {
+    const block = document.getElementById("vpAlertBlock");
+    const countEl = document.getElementById("vpAlertCount");
+    const listEl = document.getElementById("vpAlertList");
+    if (!block || !countEl || !listEl) return;
+
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const blocked = tasksList.filter(t => t.status === "Bloqueado");
+
+    if (blocked.length === 0) {
+        block.style.display = "none";
+        return;
+    }
+
+    block.style.display = "block";
+    countEl.innerText = blocked.length;
+
+    // Ordena por aging desc (mais antigo primeiro)
+    const enriched = blocked.map(t => {
+        const start = t.inicio ? new Date(t.inicio + "T00:00:00") : null;
+        const aging = start ? Math.max(0, Math.ceil((today - start) / (1000 * 60 * 60 * 24))) : 0;
+        return { ...t, _aging: aging };
+    }).sort((a, b) => b._aging - a._aging);
+
+    listEl.innerHTML = "";
+    enriched.forEach(t => {
+        const severity = t._aging > 10 ? "critical" : "warning";
+        const motivo = t.observacoes || t.description || "Motivo não informado — consultar responsável";
+        const item = document.createElement("div");
+        item.className = `vp-alert-item ${severity}`;
+        item.setAttribute("data-docid", t.docId);
+        item.innerHTML = `
+            <div class="vp-alert-item-content">
+                <span class="vp-alert-item-title" title="${(t.atividade || "").replace(/"/g, "&quot;")}">${t.atividade || "(sem título)"}</span>
+                <span class="vp-alert-item-detail">${t.areaCliente || "—"} · Resp.: ${t.responsavel || "Equipe"} · Bloqueado há ${t._aging}d · ${motivo}</span>
+            </div>
+            <span class="vp-alert-item-tag">${t._aging > 10 ? "AÇÃO IMEDIATA" : "ESCALAR"}</span>
+        `;
+        item.addEventListener("click", () => openDetailModal(t.docId));
+        listEl.appendChild(item);
+    });
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.E TOP 3 MARCOS CRÍTICOS — popula nextMilestonesList
+// ─────────────────────────────────────────────────────────
+function populateTopMilestones() {
+    const listEl = document.getElementById("nextMilestonesList");
+    if (!listEl) return;
+
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const horizonDate = new Date(today);
+    horizonDate.setDate(today.getDate() + 60);
+
+    const candidates = tasksList
+        .filter(t => t.status !== "Concluído" && t.prazo)
+        .map(t => {
+            const due = new Date(t.prazo + "T00:00:00");
+            const daysLeft = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+            return { ...t, _daysLeft: daysLeft, _due: due };
+        })
+        .filter(t => t._due <= horizonDate)
+        .sort((a, b) => a._daysLeft - b._daysLeft)
+        .slice(0, 3);
+
+    if (candidates.length === 0) {
+        listEl.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Sem marcos críticos nos próximos 60 dias.</div>`;
+        return;
+    }
+
+    listEl.innerHTML = "";
+    candidates.forEach(t => {
+        let color, chipLabel;
+        if (t._daysLeft < 0) {
+            color = "red";
+            chipLabel = `Atrasado ${Math.abs(t._daysLeft)}d`;
+        } else if (t._daysLeft <= 7) {
+            color = "red";
+            chipLabel = `${t._daysLeft}d`;
+        } else if (t._daysLeft <= 30) {
+            color = "amber";
+            chipLabel = `${t._daysLeft}d`;
+        } else {
+            color = "green";
+            chipLabel = `${t._daysLeft}d`;
+        }
+
+        const item = document.createElement("div");
+        item.className = `milestone-item ${color}`;
+        item.setAttribute("data-docid", t.docId);
+        const prazoFmt = t.prazo.split("-").reverse().join("/");
+        item.innerHTML = `
+            <div class="milestone-info">
+                <span class="milestone-title" title="${(t.atividade || "").replace(/"/g, "&quot;")}">${t.atividade}</span>
+                <span class="milestone-meta">${t.pilar || "—"} · Resp.: ${t.responsavel || "Equipe"} · Prazo ${prazoFmt}</span>
+            </div>
+            <span class="milestone-deadline-chip ${color}">${chipLabel}</span>
+        `;
+        item.addEventListener("click", () => openDetailModal(t.docId));
+        listEl.appendChild(item);
+    });
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.F DISTRIBUIÇÃO DE CARGA POR RESPONSÁVEL
+// ─────────────────────────────────────────────────────────
+function populateWorkload() {
+    const listEl = document.getElementById("workloadList");
+    if (!listEl) return;
+
+    const ativas = tasksList.filter(t => t.status !== "Concluído");
+    if (ativas.length === 0) {
+        listEl.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Nenhuma atividade ativa.</div>`;
+        return;
+    }
+
+    const workloadMap = {};
+    ativas.forEach(t => {
+        const resp = t.responsavel || "Não atribuído";
+        workloadMap[resp] = (workloadMap[resp] || 0) + 1;
+    });
+
+    const sorted = Object.entries(workloadMap).sort((a, b) => b[1] - a[1]);
+
+    listEl.innerHTML = "";
+    sorted.forEach(([resp, count]) => {
+        const item = document.createElement("div");
+        item.className = "workload-item";
+        item.innerHTML = `
+            <span class="workload-name">${resp}</span>
+            <span class="workload-count">${count} ativa(s)</span>
+        `;
+        listEl.appendChild(item);
+    });
+}
+
+// ─────────────────────────────────────────────────────────
+// 5.G MATURIDADE POR PILAR (barras simples de avanço médio)
+// ─────────────────────────────────────────────────────────
+function populatePilarMaturity() {
+    const container = document.getElementById("pilarProgressContainer");
+    if (!container) return;
+
+    const pilarMap = {};
+    tasksList.forEach(t => {
+        const pilar = t.pilar || "Sem pilar";
+        if (!pilarMap[pilar]) pilarMap[pilar] = { sum: 0, count: 0 };
+        pilarMap[pilar].sum += (t.percentualConcluido || 0);
+        pilarMap[pilar].count += 1;
+    });
+
+    const rows = Object.entries(pilarMap).map(([pilar, data]) => ({
+        pilar,
+        avg: data.count > 0 ? Math.round(data.sum / data.count) : 0,
+        count: data.count
+    })).sort((a, b) => b.avg - a.avg);
+
+    if (rows.length === 0) {
+        container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1.5rem;">Sem dados de pilar disponíveis.</div>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    rows.forEach(r => {
+        const row = document.createElement("div");
+        row.className = "pilar-progress-row";
+        row.innerHTML = `
+            <span class="pilar-name" title="${r.pilar}">${r.pilar}</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar-fill" style="width: ${r.avg}%;"></div></div>
+            <span class="pilar-pct">${r.avg}%</span>
+        `;
+        container.appendChild(row);
+    });
 }
 
 // 5.1 POPULAR SIDEBAR DE RISCOS E GARGALOS CRÔNICOS
@@ -714,14 +1017,14 @@ function renderCharts() {
             datasets: [{
                 data: Object.values(statusCounts),
                 backgroundColor: [
-                    '#86868b', // Não iniciado (Cinza Neutro)
-                    '#c084fc', // Em andamento (Roxo Soft)
-                    '#0071e3', // Concluído (Azul Premium)
-                    '#f59e0b', // Atrasado (Laranja)
-                    '#ef4444'  // Bloqueado (Vermelho)
+                    '#7F7F7F', // Não iniciado (Cinza Claro Spread)
+                    '#6E3AB8', // Em andamento (Roxo Spread claro)
+                    '#FF7400', // Concluído (Laranja Spread — cor principal)
+                    '#FF9A0A', // Atrasado (Amarelo/Laranja Claro Spread)
+                    '#EF4444'  // Bloqueado (Vermelho — semântico)
                 ],
                 borderWidth: isDark ? 2 : 1,
-                borderColor: isDark ? '#09090b' : '#ffffff'
+                borderColor: isDark ? '#1A1620' : '#FFFFFF'
             }]
         },
         options: {
@@ -758,13 +1061,13 @@ function renderCharts() {
                 {
                     label: 'Concluído',
                     data: pilarData.map(d => d.concluida),
-                    backgroundColor: '#0071e3', // Azul
+                    backgroundColor: '#FF7400', // Laranja Spread (cor principal)
                     borderRadius: 4
                 },
                 {
                     label: 'Ativos / Outros',
                     data: pilarData.map(d => d.outros),
-                    backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                    backgroundColor: isDark ? 'rgba(75, 17, 150, 0.35)' : 'rgba(75, 17, 150, 0.18)',  // Roxo Spread suave
                     borderRadius: 4
                 }
             ]
@@ -1193,68 +1496,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Escape") closeDetailModal();
     });
     
-    // Liga botões de Drill-Down nos cards de métricas superiores
-    const metricTotal = document.getElementById("metricCardTotal");
-    if (metricTotal) {
-        metricTotal.addEventListener("click", () => {
+    // Cards de KPIs estratégicos: não fazem drill-down por status (são métricas, não filtros).
+    // Filtragem detalhada disponível na aba "Radar Operacional".
+    //
+    // Atalho: clicar no card "Aging de Bloqueios" leva direto pra aba Radar filtrando bloqueados.
+    const metricAging = document.getElementById("metricCardAging");
+    if (metricAging) {
+        metricAging.style.cursor = "pointer";
+        metricAging.setAttribute("title", "Clique para ver os bloqueios em detalhe no Radar Operacional");
+        metricAging.addEventListener("click", () => {
             filterSlaOnly = false;
-            document.getElementById("inputSearch").value = "";
-            document.getElementById("filterStatus").value = "";
-            document.getElementById("filterPilar").value = "";
-            document.getElementById("filterResponsible").value = "";
-            document.getElementById("filterPriority").value = "";
-            filterTasks();
-            
-            const radarSection = document.querySelector(".radar-operational-section");
-            if (radarSection) radarSection.scrollIntoView({ behavior: "smooth" });
-        });
-    }
-    
-    const metricCompleted = document.getElementById("metricCardCompleted");
-    if (metricCompleted) {
-        metricCompleted.addEventListener("click", () => {
-            filterSlaOnly = false;
-            document.getElementById("inputSearch").value = "";
-            document.getElementById("filterStatus").value = "Concluído";
-            document.getElementById("filterPilar").value = "";
-            document.getElementById("filterResponsible").value = "";
-            document.getElementById("filterPriority").value = "";
-            filterTasks();
-            
-            const radarSection = document.querySelector(".radar-operational-section");
-            if (radarSection) radarSection.scrollIntoView({ behavior: "smooth" });
-        });
-    }
-    
-    const metricProgress = document.getElementById("metricCardProgress");
-    if (metricProgress) {
-        metricProgress.addEventListener("click", () => {
-            filterSlaOnly = false;
-            document.getElementById("inputSearch").value = "";
-            document.getElementById("filterStatus").value = "Em andamento";
-            document.getElementById("filterPilar").value = "";
-            document.getElementById("filterResponsible").value = "";
-            document.getElementById("filterPriority").value = "";
-            filterTasks();
-            
-            const radarSection = document.querySelector(".radar-operational-section");
-            if (radarSection) radarSection.scrollIntoView({ behavior: "smooth" });
-        });
-    }
-    
-    const metricSla = document.getElementById("metricCardSla");
-    if (metricSla) {
-        metricSla.addEventListener("click", () => {
-            filterSlaOnly = true; // Ativa filtro especial (Atrasadas + Bloqueadas)
-            document.getElementById("inputSearch").value = "";
-            document.getElementById("filterStatus").value = "";
-            document.getElementById("filterPilar").value = "";
-            document.getElementById("filterResponsible").value = "";
-            document.getElementById("filterPriority").value = "";
-            filterTasks();
-            
-            const radarSection = document.querySelector(".radar-operational-section");
-            if (radarSection) radarSection.scrollIntoView({ behavior: "smooth" });
+            const searchInput = document.getElementById("inputSearch");
+            const filterStatus = document.getElementById("filterStatus");
+            const filterPilar = document.getElementById("filterPilar");
+            const filterResponsible = document.getElementById("filterResponsible");
+            const filterPriority = document.getElementById("filterPriority");
+            if (searchInput) searchInput.value = "";
+            if (filterStatus) filterStatus.value = "Bloqueado";
+            if (filterPilar) filterPilar.value = "";
+            if (filterResponsible) filterResponsible.value = "";
+            if (filterPriority) filterPriority.value = "";
+            showTab("activities");
+            setTimeout(filterTasks, 100);
         });
     }
 
