@@ -18,9 +18,7 @@ let chartStatusObj = null;
 let chartPilarObj = null;
 let filterSlaOnly = false; // Estado customizado para filtro de SLA falho (Atrasados + Bloqueados)
 
-// OPÇÕES DOS COMBOS DINÂMICOS (CARREGADAS DO FIRESTORE OU LOCAL DE BACKUP)
-let dynamicResponsibles = ["Marcos", "Time de Processos", "Equipe SI", "DPO", "Auditoria", "Externo / Parceiro"];
-let dynamicAreas = ["Diretoria", "TI", "Financeiro", "RH", "Comercial", "Operações", "Jurídico", "Todas as áreas"];
+// DADOS OPERACIONAIS DE METADADOS: Todos os responsáveis e áreas são extraídos em tempo real a partir das tarefas do Firestore
 
 // Lógica de controle do Editor do Relatório
 const reportEditorState = {
@@ -79,9 +77,6 @@ function initFirebase() {
         // Ativa escuta em tempo real nas tarefas
         setupRealtimeSync();
 
-        // Ativa escuta em tempo real nas configurações
-        setupSettingsRealtimeSync();
-
     } catch (error) {
         console.error("Erro ao inicializar conexão com o Firebase:", error);
         if (statusDiv) statusDiv.className = "db-status disconnected";
@@ -137,37 +132,7 @@ function setupRealtimeSync() {
     });
 }
 
-// 2.1 SINCRONISMO DAS CONFIGURAÇÕES DE CAMPOS DINÂMICOS (RESPONSÁVEIS E ÁREAS)
-function setupSettingsRealtimeSync() {
-    const settingsDocRef = doc(db, "settings", "options");
-    
-    onSnapshot(settingsDocRef, async (docSnap) => {
-        if (!docSnap.exists()) {
-            console.log("Configurações não encontradas! Inicializando opções padrão no Firebase...");
-            try {
-                await setDoc(settingsDocRef, {
-                    responsibles: ["Marcos", "Time de Processos", "Equipe SI", "DPO", "Auditoria", "Externo / Parceiro"],
-                    areas: ["Diretoria", "TI", "Financeiro", "RH", "Comercial", "Operações", "Jurídico", "Todas as áreas"]
-                });
-            } catch (err) {
-                console.error("Erro ao inicializar configurações no Firebase:", err);
-            }
-            return;
-        }
 
-        const data = docSnap.data();
-        dynamicResponsibles = data.responsibles || [];
-        dynamicAreas = data.areas || [];
-
-        // Atualiza os combos da UI
-        updateSelectDropdowns();
-
-        // Atualiza as listas de badges na aba Configurações
-        renderSettingsBadges();
-    }, (error) => {
-        console.error("Erro no sincronismo das configurações do Firestore:", error);
-    });
-}
 
 // Atualiza os seletores HTML dinamicamente com base nas opções configuradas e pilares ativos
 function updateSelectDropdowns() {
@@ -176,7 +141,10 @@ function updateSelectDropdowns() {
     if (filterResp) {
         const currentValue = filterResp.value;
         filterResp.innerHTML = '<option value="">Responsável: Todos</option>';
-        dynamicResponsibles.forEach(resp => {
+        
+        // Obtém responsáveis reais das tarefas ativas
+        const dynamicResponsibles = [...new Set(tasksList.map(t => t.responsavel).filter(Boolean))];
+        dynamicResponsibles.sort().forEach(resp => {
             const opt = document.createElement("option");
             opt.value = resp;
             opt.textContent = resp;
@@ -185,35 +153,7 @@ function updateSelectDropdowns() {
         filterResp.value = currentValue;
     }
 
-    // 2. taskResponsible (responsável no formulário modal)
-    const taskResp = document.getElementById("taskResponsible");
-    if (taskResp) {
-        const currentValue = taskResp.value;
-        taskResp.innerHTML = '<option value="" disabled selected>Selecione um responsável</option>';
-        dynamicResponsibles.forEach(resp => {
-            const opt = document.createElement("option");
-            opt.value = resp;
-            opt.textContent = resp;
-            taskResp.appendChild(opt);
-        });
-        taskResp.value = currentValue;
-    }
-
-    // 3. taskArea (área cliente no formulário modal)
-    const taskArea = document.getElementById("taskArea");
-    if (taskArea) {
-        const currentValue = taskArea.value;
-        taskArea.innerHTML = '<option value="" disabled selected>Selecione uma área cliente</option>';
-        dynamicAreas.forEach(area => {
-            const opt = document.createElement("option");
-            opt.value = area;
-            opt.textContent = area;
-            taskArea.appendChild(opt);
-        });
-        taskArea.value = currentValue;
-    }
-
-    // 4. filterPilar (filtro de pilares ativo no dashboard)
+    // 2. filterPilar (filtro de pilares ativo no dashboard)
     const filterPilar = document.getElementById("filterPilar");
     if (filterPilar) {
         const currentValue = filterPilar.value;
@@ -223,7 +163,7 @@ function updateSelectDropdowns() {
         const pilars = [...new Set(tasksList.map(t => t.pilar).filter(Boolean))];
         const pilarList = pilars.length > 0 ? pilars : ["Segurança da Informação", "Processos / Lean"];
         
-        pilarList.forEach(p => {
+        pilarList.sort().forEach(p => {
             const opt = document.createElement("option");
             opt.value = p;
             opt.textContent = p;
@@ -232,7 +172,7 @@ function updateSelectDropdowns() {
         filterPilar.value = currentValue;
     }
 
-    // 5. taskPilar (pilar no formulário modal)
+    // 3. taskPilar (pilar no formulário modal do Drawer)
     const taskPilar = document.getElementById("taskPilar");
     if (taskPilar) {
         const currentValue = taskPilar.value;
@@ -241,7 +181,7 @@ function updateSelectDropdowns() {
         const pilars = [...new Set(tasksList.map(t => t.pilar).filter(Boolean))];
         const pilarList = pilars.length > 0 ? pilars : ["Segurança da Informação", "Processos / Lean"];
         
-        pilarList.forEach(p => {
+        pilarList.sort().forEach(p => {
             const opt = document.createElement("option");
             opt.value = p;
             opt.textContent = p;
@@ -253,23 +193,23 @@ function updateSelectDropdowns() {
     }
 }
 
-// Renderiza os badges interativos na aba de Configurações
+// Renderiza os badges interativos na aba de Configurações (Apenas Leitura dinâmica de metadados reais)
 function renderSettingsBadges() {
     const mgrRespList = document.getElementById("mgrResponsiblesList");
     const mgrAreaList = document.getElementById("mgrAreasList");
 
+    const dynamicResponsibles = [...new Set(tasksList.map(t => t.responsavel).filter(Boolean))];
+    const dynamicAreas = [...new Set(tasksList.map(t => t.areaCliente).filter(Boolean))];
+
     if (mgrRespList) {
         mgrRespList.innerHTML = "";
         if (dynamicResponsibles.length === 0) {
-            mgrRespList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhum responsável cadastrado.</span>`;
+            mgrRespList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhum responsável detectado no Firestore.</span>`;
         } else {
-            dynamicResponsibles.forEach((resp, index) => {
+            dynamicResponsibles.sort().forEach(resp => {
                 const badge = document.createElement("div");
                 badge.className = "mgr-badge";
-                badge.innerHTML = `
-                    <span>${resp}</span>
-                    <button class="btn-remove-badge" title="Remover Responsável" data-type="responsible" data-index="${index}">&times;</button>
-                `;
+                badge.innerHTML = `<span>${resp}</span>`;
                 mgrRespList.appendChild(badge);
             });
         }
@@ -278,130 +218,15 @@ function renderSettingsBadges() {
     if (mgrAreaList) {
         mgrAreaList.innerHTML = "";
         if (dynamicAreas.length === 0) {
-            mgrAreaList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhuma área cadastrada.</span>`;
+            mgrAreaList.innerHTML = `<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Nenhuma área cliente detectada no Firestore.</span>`;
         } else {
-            dynamicAreas.forEach((area, index) => {
+            dynamicAreas.sort().forEach(area => {
                 const badge = document.createElement("div");
                 badge.className = "mgr-badge purple";
-                badge.innerHTML = `
-                    <span>${area}</span>
-                    <button class="btn-remove-badge" title="Remover Área Cliente" data-type="area" data-index="${index}">&times;</button>
-                `;
+                badge.innerHTML = `<span>${area}</span>`;
                 mgrAreaList.appendChild(badge);
             });
         }
-    }
-
-    // Liga eventos de clique de remoção
-    setupRemoveBadgeListeners();
-}
-
-// Configura os escutadores de exclusão de badges
-function setupRemoveBadgeListeners() {
-    document.querySelectorAll(".btn-remove-badge").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const type = btn.getAttribute("data-type");
-            const index = parseInt(btn.getAttribute("data-index"));
-
-            if (isNaN(index)) return;
-
-            if (db === null) {
-                alert("Não é possível remover opções enquanto o Firebase estiver offline.");
-                return;
-            }
-
-            try {
-                const settingsDocRef = doc(db, "settings", "options");
-                if (type === "responsible") {
-                    const removedName = dynamicResponsibles[index];
-                    if (confirm(`Deseja realmente remover o responsável "${removedName}"?`)) {
-                        const newResponsibles = [...dynamicResponsibles];
-                        newResponsibles.splice(index, 1);
-                        await setDoc(settingsDocRef, {
-                            responsibles: newResponsibles,
-                            areas: dynamicAreas
-                        });
-                    }
-                } else if (type === "area") {
-                    const removedArea = dynamicAreas[index];
-                    if (confirm(`Deseja realmente remover a área "${removedArea}"?`)) {
-                        const newAreas = [...dynamicAreas];
-                        newAreas.splice(index, 1);
-                        await setDoc(settingsDocRef, {
-                            responsibles: dynamicResponsibles,
-                            areas: newAreas
-                        });
-                    }
-                }
-            } catch (err) {
-                console.error("Erro ao atualizar configurações no Firestore:", err);
-                alert("Falha ao salvar no Firestore: " + err.message);
-            }
-        });
-    });
-}
-
-// Adiciona um novo responsável ao Firestore
-async function handleAddResponsible() {
-    const input = document.getElementById("inputNewResponsible");
-    if (!input) return;
-    
-    const value = input.value.trim();
-    if (!value) return;
-
-    if (db === null) {
-        alert("Não é possível adicionar opções enquanto o Firebase estiver offline.");
-        return;
-    }
-
-    if (dynamicResponsibles.includes(value)) {
-        alert("Este responsável já está cadastrado.");
-        return;
-    }
-
-    try {
-        const settingsDocRef = doc(db, "settings", "options");
-        const newResponsibles = [...dynamicResponsibles, value];
-        await setDoc(settingsDocRef, {
-            responsibles: newResponsibles,
-            areas: dynamicAreas
-        });
-        input.value = "";
-    } catch (err) {
-        console.error("Erro ao adicionar responsável:", err);
-        alert("Falha ao adicionar responsável no Firestore: " + err.message);
-    }
-}
-
-// Adiciona uma nova área cliente ao Firestore
-async function handleAddArea() {
-    const input = document.getElementById("inputNewArea");
-    if (!input) return;
-    
-    const value = input.value.trim();
-    if (!value) return;
-
-    if (db === null) {
-        alert("Não é possível adicionar opções enquanto o Firebase estiver offline.");
-        return;
-    }
-
-    if (dynamicAreas.includes(value)) {
-        alert("Esta área cliente já está cadastrada.");
-        return;
-    }
-
-    try {
-        const settingsDocRef = doc(db, "settings", "options");
-        const newAreas = [...dynamicAreas, value];
-        await setDoc(settingsDocRef, {
-            responsibles: dynamicResponsibles,
-            areas: newAreas
-        });
-        input.value = "";
-    } catch (err) {
-        console.error("Erro ao adicionar área cliente:", err);
-        alert("Falha ao adicionar área cliente no Firestore: " + err.message);
     }
 }
 
@@ -1593,26 +1418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSelectDropdowns();
     renderSettingsBadges();
 
-    // Liga botões de adição de opções na aba Configurações
-    const btnAddResp = document.getElementById("btnAddNewResponsible");
-    if (btnAddResp) btnAddResp.addEventListener("click", handleAddResponsible);
-    
-    const inputNewResp = document.getElementById("inputNewResponsible");
-    if (inputNewResp) {
-        inputNewResp.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") handleAddResponsible();
-        });
-    }
 
-    const btnAddArea = document.getElementById("btnAddNewArea");
-    if (btnAddArea) btnAddArea.addEventListener("click", handleAddArea);
-    
-    const inputNewArea = document.getElementById("inputNewArea");
-    if (inputNewArea) {
-        inputNewArea.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") handleAddArea();
-        });
-    }
 
     // Recupera tema salvo do local storage
     const savedTheme = localStorage.getItem("grc-theme") || "dark";

@@ -190,13 +190,6 @@
                             
                             <select id="filterPilar" class="exec-select-filter">
                                 <option value="">Pilar: Todos</option>
-                                <option value="Segurança da Informação">Segurança da Informação</option>
-                                <option value="Privacidade / LGPD">Privacidade / LGPD</option>
-                                <option value="ISO 27001">ISO 27001</option>
-                                <option value="ISO 9001">ISO 9001</option>
-                                <option value="Auditoria Interna">Auditoria Interna</option>
-                                <option value="Processos / Lean">Processos / Lean</option>
-                                <option value="Conscientização">Conscientização</option>
                             </select>
                             
                             <select id="filterResponsible" class="exec-select-filter">
@@ -404,34 +397,26 @@
                         </div>
                     </div>
 
-                    <!-- Gestão de Parâmetros -->
+                    <!-- Gestão de Parâmetros (Leitura Dinâmica) -->
                     <div class="config-card">
                         <div class="config-header-wrapper" style="margin-bottom: 1rem;">
                             <div class="config-icon" style="color: var(--purple); background: var(--purple-glow);">⚙️</div>
                             <div>
-                                <h3 class="config-title">Gerenciamento de Parâmetros GRC</h3>
-                                <p class="config-subtitle">Cadastre ou remova responsáveis e áreas do portfólio</p>
+                                <h3 class="config-title">Mapeamento de Metadados Ativos</h3>
+                                <p class="config-subtitle">Responsáveis e áreas detectadas dinamicamente nas tarefas do seu Firebase</p>
                             </div>
                         </div>
 
                         <!-- Responsáveis -->
                         <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
-                            <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Responsáveis Mapeados</label>
+                            <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Membros do Time Detectados</label>
                             <div class="options-badge-list" id="mgrResponsiblesList"></div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" id="inputNewResponsible" class="form-control" placeholder="Novo responsável...">
-                                <button id="btnAddNewResponsible" class="btn-primary" style="flex-shrink: 0;">Adicionar</button>
-                            </div>
                         </div>
 
                         <!-- Áreas -->
                         <div>
                             <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Áreas Cliente Mapeadas</label>
                             <div class="options-badge-list" id="mgrAreasList"></div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" id="inputNewArea" class="form-control" placeholder="Nova área...">
-                                <button id="btnAddNewArea" class="btn-primary" style="flex-shrink: 0;">Adicionar</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -467,17 +452,10 @@
                     </div>
                     
                     <!-- Pilar GRC -->
+                    <!-- Pilar GRC -->
                     <div class="form-group">
                         <label class="form-label" for="taskPilar">Pilar GRC</label>
-                        <select id="taskPilar" class="form-control" required>
-                            <option value="Segurança da Informação">Segurança da Informação</option>
-                            <option value="Privacidade / LGPD">Privacidade / LGPD</option>
-                            <option value="ISO 27001">ISO 27001</option>
-                            <option value="ISO 9001">ISO 9001</option>
-                            <option value="Auditoria Interna">Auditoria Interna</option>
-                            <option value="Processos / Lean">Processos / Lean</option>
-                            <option value="Conscientização">Conscientização</option>
-                        </select>
+                        <select id="taskPilar" class="form-control" required></select>
                     </div>
 
                     <!-- Atividade -->
@@ -489,13 +467,13 @@
                     <!-- Área Cliente -->
                     <div class="form-group">
                         <label class="form-label" for="taskArea">Área Cliente</label>
-                        <select id="taskArea" class="form-control" required></select>
+                        <input type="text" id="taskArea" class="form-control" placeholder="Ex: TI" required>
                     </div>
 
                     <!-- Responsável -->
                     <div class="form-group">
                         <label class="form-label" for="taskResponsible">Responsável</label>
-                        <select id="taskResponsible" class="form-control" required></select>
+                        <input type="text" id="taskResponsible" class="form-control" placeholder="Ex: Marcos" required>
                     </div>
 
                     <!-- Prioridade -->
