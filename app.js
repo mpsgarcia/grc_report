@@ -769,8 +769,6 @@ function populateTopMilestones() {
     if (!listEl) return;
 
     const today = new Date(); today.setHours(0, 0, 0, 0);
-    const horizonDate = new Date(today);
-    horizonDate.setDate(today.getDate() + 60);
 
     const candidates = tasksList
         .filter(t => t.status !== "Concluído" && t.prazo)
@@ -779,12 +777,10 @@ function populateTopMilestones() {
             const daysLeft = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
             return { ...t, _daysLeft: daysLeft, _due: due };
         })
-        .filter(t => t._due <= horizonDate)
-        .sort((a, b) => a._daysLeft - b._daysLeft)
-        .slice(0, 3);
+        .sort((a, b) => a._daysLeft - b._daysLeft);
 
     if (candidates.length === 0) {
-        listEl.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Sem marcos críticos nos próximos 60 dias.</div>`;
+        listEl.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">Sem marcos pendentes com prazo.</div>`;
         return;
     }
 
