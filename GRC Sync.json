@@ -255,7 +255,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const token = $input.first().json.access_token;\nconst tasks = $('Transformar Tarefas').all().map(i => ({\n  ...i.json,\n  _token: token\n}));\nreturn tasks.map(t => ({ json: t }));"
+        "jsCode": "const token = $input.first().json.access_token;\nconst baseTasks = $('Transformar Tarefas').all().map(i => i.json);\n\nlet detailsList = [];\ntry {\n  detailsList = $('Buscar Detalhes Completo').all().map(i => i.json);\n} catch (e) {\n  try {\n    detailsList = $('Buscar detalhes Completo').all().map(i => i.json);\n  } catch (err) {}\n}\n\nconst enriched = baseTasks.map(t => {\n  const detail = detailsList.find(d => d.id === t.plannerTaskId) || {};\n  return {\n    ...t,\n    observacoes: detail.description || \"\",\n    _token: token\n  };\n});\n\nreturn enriched.map(t => ({ json: t }));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,

@@ -754,7 +754,7 @@ function populateVPActionRequired() {
                 <span class="vp-alert-item-title" title="${(t.atividade || "").replace(/"/g, "&quot;")}">${t.atividade || "(sem título)"}</span>
                 <span class="vp-alert-item-detail">${t.areaCliente || "—"} · Resp.: ${t.responsavel || "Equipe"} · Bloqueado há ${t._aging}d · ${motivo}</span>
             </div>
-            <span class="vp-alert-item-tag">${t._aging > 10 ? "AÇÃO IMEDIATA" : "ESCALAR"}</span>
+            <span class="vp-alert-item-tag">PONTO CRÍTICO</span>
         `;
         item.addEventListener("click", () => openDetailModal(t.docId));
         listEl.appendChild(item);
