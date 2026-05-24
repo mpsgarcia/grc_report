@@ -1,0 +1,541 @@
+{
+  "name": "GRC Sync",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        -592
+      ],
+      "id": "24e12fa8-79e4-4f7e-ad22-c1d146664beb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/planner/plans/hQmOKVyxdE2b31A26zkK8mQAHNf1/tasks",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1536,
+        -592
+      ],
+      "id": "5fcfe78f-224a-4e36-8db2-f1a18988e2a4",
+      "name": "SGSI Tasks",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/planner/plans/hQmOKVyxdE2b31A26zkK8mQAHNf1/details",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1328,
+        -592
+      ],
+      "id": "7c8cfe74-db2f-4bdf-982b-eef32f24e6a8",
+      "name": "SGSI Details",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/planner/plans/kqo6sg2CbUe5fO4ppno0UWQADUMp/tasks",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1120,
+        -592
+      ],
+      "id": "2c9025d6-0aa0-4cd9-8ab9-09ee133fc6cb",
+      "name": "Automação Tasks",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/planner/plans/kqo6sg2CbUe5fO4ppno0UWQADUMp/details",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -912,
+        -592
+      ],
+      "id": "5959575a-86b3-471f-8b88-792428e8959d",
+      "name": "Automação Details",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const USER_MAP = {\n  \"4a195462-41fc-40cd-816e-706352a55ee1\": \"Marcos\",\n  \"9176c359-9e5d-4e6a-9afc-c3893b353bff\": \"Priscilla\",\n  \"177c011b-6941-4805-83dd-68d4d7415b05\": \"Leonardo\"\n};\n\nconst BUCKET_STATUS = {\n  // SGSI\n  \"iqEMo_qIRUi3sGEg2bVd7WQAE9ph\": \"Concluído\",\n  \"EsDsqxnewEGW-dpFzOd7emQAB88I\": \"Validação\",\n  \"ooyO_J4ikECteROSOwnRZ2QAA1R_\": \"Bloqueado\",\n  \"O1o2AnJO2EaCi89nu8EDE2QAPbpy\": \"Em andamento\",\n  \"NdVawu2UoE6C2I59SpVt5mQACxjI\": \"Planejada\",      // antes: Não iniciado\n  \"ebFWNyPhnkG9fzC53X3uVmQAPPjq\": \"Backlog\",        // antes: Não iniciado (VALIDAR)\n  // Automação\n  \"oFt0HQAr7UmqAlkuR5yV2WQAL4U2\": \"Concluído\",\n  \"HN1MeCDw3UGcO4ZHL0vZGGQAG74W\": \"Validação\",\n  \"eiTJGsIOtE2nfjbLXH7JjGQANF9Z\": \"Bloqueado\",\n  \"AajSEm2iYkajxIVl0V5d7WQAN9kd\": \"Em andamento\",\n  \"X9BJB_gyJk6MZxrVIffT9WQAEeyD\": \"Planejada\",      // antes: Não iniciado\n  \"geFjqrqn806nh1o0n89tzWQAHypL\": \"Backlog\"         // antes: Não iniciado (VALIDAR)\n};\n\nconst PLAN_PILAR = {\n  \"hQmOKVyxdE2b31A26zkK8mQAHNf1\": \"Segurança da Informação\",\n  \"kqo6sg2CbUe5fO4ppno0UWQADUMp\": \"Processos / Lean\"\n};\n\nconst PLANEJAMENTO_BUCKETS = [\n  \"NdVawu2UoE6C2I59SpVt5mQACxjI\",\n  \"X9BJB_gyJk6MZxrVIffT9WQAEeyD\"\n];\n\nconst BACKLOG_BUCKETS = [\n  \"ebFWNyPhnkG9fzC53X3uVmQAPPjq\",\n  \"geFjqrqn806nh1o0n89tzWQAHypL\"\n];\n\nfunction formatDate(iso) {\n  if (!iso) return \"\";\n  return iso.split(\"T\")[0];\n}\n\nfunction resolveResponsavel(assignments) {\n  if (!assignments) return \"Equipe\";\n  const ids = Object.keys(assignments);\n  if (!ids.length) return \"Equipe\";\n  for (const id of ids) {\n    if (USER_MAP[id]) return USER_MAP[id];\n  }\n  return \"Equipe\";\n}\n\nfunction resolveAreaCliente(appliedCategories, categoryDescriptions) {\n  if (!appliedCategories || !categoryDescriptions) return \"Todas as áreas\";\n  const labels = Object.entries(appliedCategories)\n    .filter(([, v]) => v === true)\n    .map(([k]) => categoryDescriptions[k])\n    .filter(Boolean);\n  return labels.length > 0 ? labels[0] : \"Todas as áreas\";\n}\n\nfunction resolveStatus(bucketId, percentComplete, dueDateTime) {\n  const bucketStatus = BUCKET_STATUS[bucketId] || \"Backlog\";\n\n  // Bloqueado, Validação e Concluído têm prioridade\n  if (bucketStatus === \"Bloqueado\")  return \"Bloqueado\";\n  if (bucketStatus === \"Validação\")  return \"Validação\";\n  if (bucketStatus === \"Concluído\" || percentComplete === 100) return \"Concluído\";\n\n  // Atraso: dueDate venceu e tarefa não está em nenhum dos estados acima\n  // Aplica para Em andamento e Planejada (Backlog não conta como atrasado)\n  if (dueDateTime && bucketStatus !== \"Backlog\") {\n    const due = new Date(dueDateTime);\n    const today = new Date(); today.setHours(0,0,0,0);\n    if (due < today) return \"Atrasado\";\n  }\n\n  return bucketStatus;\n}\n\nconst sgsiTasks = $('SGSI Tasks').first().json.value || [];\nconst sgsiCats  = $('SGSI Details').first().json.categoryDescriptions || {};\nconst autoTasks = $('Automação Tasks').first().json.value || [];\nconst autoCats  = $('Automação Details').first().json.categoryDescriptions || {};\n\nconst allTasks = [\n  ...sgsiTasks.map(t => ({ ...t, _cats: sgsiCats })),\n  ...autoTasks.map(t => ({ ...t, _cats: autoCats }))\n];\n\nlet counter = 1;\n\nreturn allTasks.map(task => ({\n  json: {\n    plannerTaskId:        task.id,\n    id:                   `AT-${String(counter++).padStart(3, \"0\")}`,\n    atividade:            task.title.trim(),\n    pilar:                PLAN_PILAR[task.planId] || \"Segurança da Informação\",\n    areaCliente:          resolveAreaCliente(task.appliedCategories, task._cats),\n    responsavel:          resolveResponsavel(task.assignments),\n    prioridade:           \"Média\",\n    status:               resolveStatus(task.bucketId, task.percentComplete, task.dueDateTime),\n    inicio:               formatDate(task.createdDateTime),\n    prazo:                formatDate(task.dueDateTime),\n    completedDateTime:    formatDate(task.completedDateTime),\n    isBacklog:            BACKLOG_BUCKETS.includes(task.bucketId),\n    isPlanejamentoSemana: PLANEJAMENTO_BUCKETS.includes(task.bucketId),\n    percentualConcluido:  task.percentComplete || 0,\n    entregavel:           \"\",\n    observacoes:          \"\"\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        -592
+      ],
+      "id": "66d1fffc-0bbe-492b-beaa-6443fd83363a",
+      "name": "Transformar Tarefas"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.microsoft.com/v1.0/chats",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"chatType\": \"oneOnOne\",\n  \"members\": [\n    {\n      \"@odata.type\": \"#microsoft.graph.aadUserConversationMember\",\n      \"roles\": [\"owner\"],\n      \"user@odata.bind\": \"https://graph.microsoft.com/v1.0/users/4a195462-41fc-40cd-816e-706352a55ee1\"\n    },\n    {\n      \"@odata.type\": \"#microsoft.graph.aadUserConversationMember\",\n      \"roles\": [\"owner\"],\n      \"user@odata.bind\": \"https://graph.microsoft.com/v1.0/users/9176c359-9e5d-4e6a-9afc-c3893b353bff\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -48,
+        -592
+      ],
+      "id": "2e8fafbb-bde8-47c4-92c8-80484e6f837a",
+      "name": "Criar Chat",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0b137fe1-4b48-4d16-b630-e1779625c019",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Bloqueado",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        -592
+      ],
+      "id": "6e143b9e-c613-447a-ae46-6887b3e0eaa1",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.microsoft.com/v1.0/chats/{{ $json.id }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"body\": {\n    \"contentType\": \"html\",\n    \"content\": \"={{ $('Gerar Resumo').first().json.content }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        -592
+      ],
+      "id": "5da0a27a-c052-4dd1-b773-8905ce721b3e",
+      "name": "Enviar mensagem",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const tasks = $('Transformar Tarefas').all().map(i => i.json);\n\n// 1. Busca o parecer gerado pela IA (do nó \"Basic LLM Chain\" ou o nome correspondente no Canvas)\nlet parecerAI = \"Não foi possível gerar o parecer da IA.\";\ntry {\n  parecerAI = $('Basic LLM Chain').first().json.text;\n} catch (e) {\n  parecerAI = `Não foi possível obter o parecer da IA. Verifique se o nome do nó de IA no seu canvas é exatamente 'Basic LLM Chain'. Erro: ${e.message}`;\n}\n\n// 2. Busca as descrições detalhadas diretamente de 'Buscar detalhes Completo' de forma case-insensitive segura\nconst blockedDescMap = {};\ntry {\n  const details = $('Buscar detalhes Completo').all().map(i => i.json);\n  details.forEach(d => {\n    blockedDescMap[d.id] = d.description || \"Motivo não informado.\";\n  });\n} catch (e) {\n  try {\n    const details = $('Buscar Detalhes Completo').all().map(i => i.json);\n    details.forEach(d => {\n      blockedDescMap[d.id] = d.description || \"Motivo não informado.\";\n    });\n  } catch (err) {\n    // Caso nenhum nó exista ou não tenha sido executado\n  }\n}\n\n// ── PERÍODO ──\nconst today = new Date();\nconst dow = today.getDay();\nconst lastMonday = new Date(today);\nlastMonday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) - 7);\nconst lastSunday = new Date(lastMonday);\nlastSunday.setDate(lastMonday.getDate() + 6);\nconst fmtBR  = d => d.toLocaleDateString(\"pt-BR\");\nconst fmtISO = s => s ? new Date(s+\"T00:00:00\").toLocaleDateString(\"pt-BR\") : \"—\";\nconst period = `${fmtBR(lastMonday)} a ${fmtBR(lastSunday)}`;\nconst hoje = fmtBR(today);\n\n// ── MÉTRICAS DOS BUCKETS E STATUS ──\nconst total       = tasks.length;\nconst backlog     = tasks.filter(t => t.isBacklog).length;\nconst planejadas  = tasks.filter(t => t.isPlanejamentoSemana).length;\nconst emAndamento = tasks.filter(t => t.status === \"Em andamento\").length;\nconst bloqueadas  = tasks.filter(t => t.status === \"Bloqueado\").length;\nconst atrasadas   = tasks.filter(t => t.status === \"Atrasado\").length;\nconst concluidas  = tasks.filter(t => t.status === \"Concluído\").length;\n\n// SLA: calculo interno para decidir o diagnóstico\nconst concluidasTasks = tasks.filter(t => t.status === \"Concluído\");\nconst concluidasNoPrazo = concluidasTasks.filter(t => {\n  if (!t.prazo) return true;\n  if (!t.completedDateTime) return false;\n  return t.completedDateTime <= t.prazo;\n}).length;\nconst sla = concluidas > 0 ? Math.round((concluidasNoPrazo / concluidas) * 100) : 100;\nconst healthIndex = sla; \nconst healthLabel = sla >= 75 ? \"SAUDÁVEL\" : sla >= 60 ? \"ATENÇÃO\" : \"CRÍTICO\";\n\nconst impedimentos = tasks.filter(t => t.status === \"Bloqueado\");\nconst planejadasList = tasks.filter(t => t.isPlanejamentoSemana);\nconst conclSemana  = tasks.filter(t => {\n  if(!t.completedDateTime) return false;\n  const c = new Date(t.completedDateTime);\n  return c >= lastMonday && c <= lastSunday;\n});\n\nconst sp  = `<br>`;\nconst div = `<hr>`;\n\nlet h = \"\";\n\n// ==========================================\n// 1. CABEÇALHO & SAUDAÇÃO DO ARGOS IA\n// ==========================================\nconst factsLine = `Backlog: ${backlog} | Planejadas: ${planejadas} | Em Andamento: ${emAndamento} | Bloqueios: ${bloqueadas} | Atrasadas: ${atrasadas} | Concluídas: ${concluidas}`;\n\nh += `<h1>📋 RELATÓRIO EXECUTIVO GRC</h1>`;\nh += `<h3><b>Período:</b> ${period} &nbsp;|&nbsp; <b>Emitido em:</b> ${hoje}</h3>`;\nh += sp;\n\nh += `<blockquote>`;\nh += `<p><font size='4'>☕ <b>Bom dia! Aqui é o Argos IA.</b></font></p>`;\nh += `<br>`;\nh += `<p><font size='3'>Como o agente autônomo do time de Segurança, Governança e Processos, acabei de consolidar o desempenho da nossa última semana operacional. Meu objetivo é garantir visibilidade total sobre a saúde das nossas frentes, poupando o seu tempo de análise.</font></p>`;\nh += `<br>`;\n\nif (healthIndex >= 75) {\n  h += `<p><font size='3'>✨ <b>O diagnóstico rápido:</b> Tivemos um avanço sólido na maioria das iniciativas, mas trago logo abaixo alguns pontos de atenção e bloqueios que precisam do seu olhar estratégico para continuarmos acelerando o time sem gargalos.</font></p>`;\n} else if (healthIndex >= 60) {\n  h += `<p><font size='3'>⚠️ <b>O diagnóstico rápido:</b> Estamos operando em nível de <b>ATENÇÃO</b> devido a gargalos pontuais em algumas entregas. Recomendo foco especial na seção de <i>Ação Solicitada ao VP</i> para destravarmos as frentes afetadas.</font></p>`;\n} else {\n  h += `<p><font size='3'>🚨 <b>O diagnóstico rápido:</b> Atenção máxima. Identifiquei impedimentos severos que estão impactando diretamente a nossa linha do tempo. Detalhei cada um deles abaixo para sua intervenção imediata.</font></p>`;\n}\n\nh += `<br>`;\nh += `<p><font size='3'><b>Em números:</b> ${factsLine}.</font></p>`;\nh += `</blockquote>`;\nh += div;\n\n// 2. PONTOS DE ATENÇÃO\nh += `<h2>🚨 PONTOS DE ATENÇÃO</h2>`;\nh += sp;\nif(impedimentos.length === 0) {\n  h += `<p><font size='4'>✅ <b>Nenhum impedimento registrado no ciclo atual.</b></font></p>`;\n} else {\n  impedimentos.forEach(t => {\n    const dias = Math.floor((new Date() - new Date(t.inicio)) / (1000*60*60*24));\n    const motivo = blockedDescMap[t.plannerTaskId] || \"Motivo não informado.\";\n    h += `<p><font size='4'>🔴 <b>Demanda &quot;${t.atividade.replace(/\"/g, '&quot;')}&quot;</b><br>`;\n    h += `Área: ${t.areaCliente} &nbsp;|&nbsp; BLOQUEADO HÁ <b>${dias} DIAS</b><br>`;\n    h += `Responsável: ${t.responsavel}<br>`;\n    h += `<b>Motivo:</b> ${motivo}</font></p>`;\n  });\n}\nh += div;\n\n// 3. MACRO ATIVIDADES\nh += `<h2>MACRO ATIVIDADES</h2>`;\nh += sp;\nh += `<table>`;\nh += `<tr>`;\nh += `<th><font size='4'>BACKLOG</font></th>`;\nh += `<th><font size='4'>PLANEJADAS</font></th>`;\nh += `<th><font size='4'>EM ANDAMENTO</font></th>`;\nh += `<th><font size='4'>BLOQUEIOS</font></th>`;\nh += `<th><font size='4'>ATRASADAS</font></th>`;\nh += `<th><font size='4'>CONCLUÍDAS</font></th>`;\nh += `</tr>`;\nh += `<tr>`;\nh += `<td><font size='6'><b>${backlog}</b></font></td>`;\nh += `<td><font size='6'><b>${planejadas}</b></font></td>`;\nh += `<td><font size='6'><b>${emAndamento}</b></font></td>`;\nh += `<td><font size='6'><b>${bloqueadas}</b></font></td>`;\nh += `<td><font size='6'><b>${atrasadas}</b></font></td>`;\nh += `<td><font size='6'><b>${concluidas}</b></font></td>`;\nh += `</tr>`;\nh += `</table>`;\nh += div;\n\n// 4. DESTAQUES DA SEMANA\nh += `<h2>📅 DESTAQUES DA SEMANA</h2>`;\nh += sp;\n\nh += `<h3>Planejadas para esta semana</h3>`;\nh += sp;\nif(planejadasList.length === 0) {\n  h += `<p><font size='4'><i>Nenhuma atividade planejada.</i></font></p>`;\n} else {\n  h += `<table>`;\n  h += `<tr><th><font size='3'>Iniciativa</font></th><th><font size='3'>Área</font></th><th><font size='3'>Resp.</font></th><th><font size='3'>Prazo</font></th></tr>`;\n  planejadasList.forEach(t => {\n    h += `<tr><td><font size='3'>${t.atividade.replace(/\"/g, '&quot;')}</font></td><td><font size='3'>${t.areaCliente}</font></td><td><font size='3'>${t.responsavel}</font></td><td><font size='3'>${fmtISO(t.prazo)}</font></td></tr>`;\n  });\n  h += `</table>`;\n}\n\nh += sp;\nh += `<h3>Concluídas na semana passada</h3>`;\nh += sp;\nif(conclSemana.length === 0) {\n  h += `<p><font size='4'><i>Nenhuma entrega no período de ${period}.</i></font></p>`;\n} else {\n  h += `<table>`;\n  h += `<tr><th><font size='3'>Iniciativa</font></th><th><font size='3'>Área</font></th><th><font size='3'>Responsável</font></th></tr>`;\n  conclSemana.forEach(t => {\n    h += `<tr><td><font size='3'>${t.atividade.replace(/\"/g, '&quot;')}</font></td><td><font size='3'>${t.areaCliente}</font></td><td><font size='3'>${t.responsavel}</font></td></tr>`;\n  });\n  h += `</table>`;\n}\nh += div;\n\n// 5. PARECER ARGOS IA (REAL, GERADO PELA INTEGRAÇÃO DE IA)\nh += `<h2>🤖 PARECER ARGOS IA</h2>`;\nh += sp;\nh += `<blockquote>`;\nh += `<p><font size='3'>${parecerAI}</font></p>`;\nh += `</blockquote>`;\nh += div;\n\n// 6. FOOTER\nh += `<p><font size='3'><i>Compilado por Agente de IA - GRC &nbsp;|&nbsp; ${hoje}</i></font></p>`;\n\nconst content = h.replace(/\\n/g, '');\nreturn [{ json: { content, healthIndex, total, concluidas, atrasadas: bloqueadas + atrasadas } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -784
+      ],
+      "id": "0a452187-4567-4d13-9c05-3b94a3813882",
+      "name": "Gerar Resumo"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\n\nconst CLIENT_EMAIL = 'firebase-adminsdk-fbsvc@grc-control.iam.gserviceaccount.com';\nconst PRIVATE_KEY = `-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDSxnta1Mt5Z4R5\nlT2NKbOn/znkigQjAcnJCJ+2y7cTdG83gwQShLIRRcSnqTmrpODzxPXKoorTvmhf\n5momTxCpbfCAlvZYkpFhvId1vSM2mOB+sG6H1i/xGWHE+6rORsZKR4Mi/E8h1/I3\nrgXQ2qf6cLfUnlw3+GK/y//KU5vY5TFuIAfcDkScr43GmA/IY7H+A/mzU86aeKjI\n+ERwA3Zc+ANnHIpOBouqrFBlIe16+wPPnBYch0oxYB1J5+mi0O7LULRw8a/E+mj4\nHsADiB/jl+DXYWlNzOkt3yh9pLr2xiC9wEzZXU2BbXoQYhKjdX1Mdg/Bdcwq1/EU\n2yQOBeynAgMBAAECggEATEEek6f0zUFUPiBuGkoCAz9lFHeSM5AMDr0d+yYMX+95\n5R1zNbfoLDOPiBDDGoQWFlsliV/w1dZHMJrNwHpOTt3FauAy06yDCFcKst/wg2of\nnfX6pw4oXhOOuZNLIkGcr3bbzKZ3goj7yoUc+YiByStKdpOsTVuBbl5BdlN1SKxK\naHnhj+GRhol7fqYAlTn0R64SxvcsE/Ma1Lbp9heptV2JafkWsTf8YC0PwcBaSFeK\npD9pMdv2Jf5xKerCBXg3ElZOTEHEbdZfUL7b7gspzffgR6c+BE+4kdHjLh20NXv7\nCwF5p3dD33LbKgVmLecNSS3r+iaNw6zvSnfT7pwIcQKBgQDukKrgis2InQY6HF2u\n1evLRoT0YrWjBKylmNY/jf95JoXXDUZI32mtUkOeeoqqgBCq4sSzSYrpJjkcyCTe\nnwX/ZfUcw21UQ//EN9bEU220dl00zV4quY9zZDlHBrfwdLPtYTRQ22aeVifmur6v\nftU6lqhYDzXSA3TYDRxn0pm61QKBgQDiLeSk9JRlntftSP6XrOLGze3F1pFPdnNs\non+1k+9N0B5xoXAmlkuzOEhkBF+MTofCSS2IFQe80dW1a3SzH6sZbxqAIkxQGzff\nWIpbTCy7s7HZHIYsjXvhLlDEVXdFhI1pbEMII7NROe0peFACeRxvtcphKtOYskui\nzuASj68PiwKBgQCQlk16WaXILqMfhSGiXTTTtqHOHCVJ8ANTOhZf3of/vUFQ3VLD\nx+Qcj8c7vbldLNDtQRNGNkRimi/zKbpu0qKn7/tmu2r/r1bMbatUwduzjClhXza7\nXkt6/DtauM+yhIioTkmO1+qR/FWimXwIkS5anATbmhxcdIvUhd25bwKNIQKBgQDM\nQQWqsfURkFEPSEwiTU6+mlmPwCWZzS6PfHA4WlBRxRC5LUFKl4/lWX6GVCy1WHXh\nTpR/v/4s1pJYM6I/4OlzHpKgBFlGPk5GtH691BzRpYWGu+uvcFXfFSR7KXN8pCfQ\nfKRMRXE6eUVjnfMjSJwVheYtua88xkbn0Esqd/dv4QKBgFcZNCsI4BCM5y1t0k82\nKLY7VLQgVa0Vsn4kjM88ODeb6ToqUWF6+5PDoehfYQXecGlyri8MWHEPQzY1+VHE\nm1UNwkA2azwJmEy26Hve7syGlQvnMC61Z3pb0KIXP29dNcvK1wA/ffHaXRaFO51o\njQF3LbF53u/wP31bCch/ctsw\n-----END PRIVATE KEY-----`;\n\nconst header = Buffer.from(JSON.stringify({alg:'RS256',typ:'JWT'})).toString('base64url');\nconst now = Math.floor(Date.now()/1000);\nconst payload = Buffer.from(JSON.stringify({\n  iss: CLIENT_EMAIL,\n  scope: 'https://www.googleapis.com/auth/datastore',\n  aud: 'https://oauth2.googleapis.com/token',\n  iat: now,\n  exp: now + 3600\n})).toString('base64url');\n\nconst signingInput = `${header}.${payload}`;\nconst sign = crypto.createSign('RSA-SHA256');\nsign.update(signingInput);\nconst signature = sign.sign(PRIVATE_KEY, 'base64url');\n\nreturn [{ json: { jwt: `${signingInput}.${signature}` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        -368
+      ],
+      "id": "569bddc1-905b-4606-be71-2b861fa61345",
+      "name": "Gerar Token Firestore"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://oauth2.googleapis.com/token",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "urn:ietf:params:oauth:grant-type:jwt-bearer"
+            },
+            {
+              "name": "assertion",
+              "value": "={{ $json.jwt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -352,
+        -368
+      ],
+      "id": "a64bd47b-b69e-434d-8278-c44cb564250d",
+      "name": "Trocar JWT por Token"
+    },
+    {
+      "parameters": {
+        "jsCode": "const token = $input.first().json.access_token;\nconst tasks = $('Transformar Tarefas').all().map(i => ({\n  ...i.json,\n  _token: token\n}));\nreturn tasks.map(t => ({ json: t }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -368
+      ],
+      "id": "afc4341d-5704-4b7f-b509-9f17a8cf4631",
+      "name": "Preparar Tasks com Token"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://firestore.googleapis.com/v1/projects/grc-control/databases/(default)/documents/activities/{{ $json.plannerTaskId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json._token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\": {\n    \"plannerTaskId\":       {\"stringValue\": \"{{ $json.plannerTaskId }}\"},\n    \"id\":                  {\"stringValue\": \"{{ $json.id }}\"},\n    \"atividade\":           {\"stringValue\": \"{{ $json.atividade }}\"},\n    \"pilar\":               {\"stringValue\": \"{{ $json.pilar }}\"},\n    \"areaCliente\":         {\"stringValue\": \"{{ $json.areaCliente }}\"},\n    \"responsavel\":         {\"stringValue\": \"{{ $json.responsavel }}\"},\n    \"prioridade\":          {\"stringValue\": \"{{ $json.prioridade }}\"},\n    \"status\":              {\"stringValue\": \"{{ $json.status }}\"},\n    \"inicio\":              {\"stringValue\": \"{{ $json.inicio }}\"},\n    \"prazo\":               {\"stringValue\": \"{{ $json.prazo }}\"},\n    \"percentualConcluido\": {\"integerValue\": \"{{ $json.percentualConcluido }}\"},\n    \"entregavel\":          {\"stringValue\": \"{{ $json.entregavel }}\"},\n    \"observacoes\":         {\"stringValue\": \"{{ $json.observacoes }}\"}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        -368
+      ],
+      "id": "d2146db6-1ccc-4022-aaac-25826df16af1",
+      "name": "Gravar no Firestore"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/planner/tasks/{{ $json.plannerTaskId }}/details",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -544,
+        -784
+      ],
+      "id": "c1f72df9-7c8a-4d22-b883-9993ea0882e3",
+      "name": "Buscar Detalhes Completo",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "gqm5Nc81sRbFMyJG",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const baseTasks = $('Transformar Tarefas').all().map(i => i.json);\nconst detailsList = $input.all().map(i => i.json);\n\n// Mescla as informações básicas de 'Transformar Tarefas' com os checklists e anotações obtidos\nconst enrichedTasks = baseTasks.map(task => {\n  const detail = detailsList.find(d => d.id === task.plannerTaskId) || {};\n  return {\n    ...task,\n    description: detail.description || \"\",\n    checklist: detail.checklist || {}\n  };\n});\n\n// Agrupa as tarefas pelo status operacional real\nconst blocked = enrichedTasks.filter(t => t.status === \"Bloqueado\");\nconst inProgress = enrichedTasks.filter(t => t.status === \"Em andamento\" || t.status === \"Atrasado\" || t.status === \"Validação\");\nconst planned = enrichedTasks.filter(t => t.isPlanejamentoSemana);\nconst completed = enrichedTasks.filter(t => t.status === \"Concluído\");\n\n// Função para compilar o texto das tarefas omitindo o responsável para segurança\nfunction compileTasksText(taskList) {\n  if (taskList.length === 0) return \"Nenhuma demanda registrada nesta categoria.\";\n  return taskList.map(t => {\n    let text = `- Demand: \"${t.atividade}\" (Pilar: ${t.pilar} | Área Cliente: ${t.areaCliente})\n`;\n    if (t.description) {\n      text += `  Anotações: ${t.description.trim()}\n`;\n    }\n    const checklist = t.checklist || {};\n    const checklistKeys = Object.keys(checklist);\n    if (checklistKeys.length > 0) {\n      text += `  Checklist:\n`;\n      checklistKeys.forEach(k => {\n        const item = checklist[k];\n        text += `    - [${item.isChecked ? \"x\" : \" \"}] ${item.title}\n`;\n      });\n    }\n    return text;\n  }).join(\"\\n\");\n}\n\nconst context = `Você é o Argos IA, o agente de inteligência autônomo do time de Governança, Segurança e Processos (GRC).\nSua missão é gerar um Parecer Executivo de alta liderança (VP Level) consolidando o status de todas as frentes de trabalho desta semana operacional.\n\nAqui está o status real de todas as nossas demandas:\n\n[DEMANDAS BLOQUEADAS / IMPEDIMENTOS]\n${compileTasksText(blocked)}\n\n[DEMANDAS EM ANDAMENTO]\n${compileTasksText(inProgress)}\n\n[DEMANDAS PLANEJADAS DA SEMANA]\n${compileTasksText(planned)}\n\n[DEMANDAS CONCLUÍDAS]\n${compileTasksText(completed)}\n\nINSTRUÇÕES DO PARECER:\n1. Seja estratégico, confiante e extremamente profissional (linguagem VP-level).\n2. Analise os checklists das demandas em andamento e bloqueadas para apontar o andamento das frentes (ex: \"Definição de papéis em GTC já concluída, aguardando suporte da alta direção...\").\n3. PROIBIÇÃO CRÍTICA DE NOMES PRÓPRIOS: Sob nenhuma hipótese mencione nomes próprios de pessoas/membros do time (como Leonardo, Marcos, Priscilla, Claudia, etc.) no parecer. Chame a atenção para gargalos de prazo, demandas sob foco necessário ou bloqueios operacionais referenciando puramente a iniciativa, o pilar afetado, a área cliente ou a equipe de forma genérica (ex: 'equipe de Segurança', 'responsável pela frente', 'time de sistemas').\n4. Forneça uma diretriz de foco e próximos passos para a próxima semana operacional.\n5. Retorne APENAS o parecer em formato HTML (use tags como <b>, <i>, <br>, <blockquote>, sem incluir tags de cabeçalho global <html> ou <body>, apenas parágrafos enriquecidos que se encaixarão em um card do Teams).\n`;\n\nreturn [{ json: { prompt: context } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        -784
+      ],
+      "id": "e4b6c3d9-6f8a-4d22-b883-9993ea0882e4",
+      "name": "Preparar Prompt IA"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_GEMINI_API_KEY",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"{{ $json.prompt }}\"\n    }]\n  }]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -160,
+        -784
+      ],
+      "id": "f5c7d8e9-6f8a-4d22-b883-9993ea0882e5",
+      "name": "Chamar IA",
+      "credentials": {}
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "SGSI Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SGSI Tasks": {
+      "main": [
+        [
+          {
+            "node": "SGSI Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SGSI Details": {
+      "main": [
+        [
+          {
+            "node": "Automação Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Automação Tasks": {
+      "main": [
+        [
+          {
+            "node": "Automação Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Automação Details": {
+      "main": [
+        [
+          {
+            "node": "Transformar Tarefas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transformar Tarefas": {
+      "main": [
+        [
+          {
+            "node": "Buscar Detalhes Completo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gerar Token Firestore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Detalhes Completo": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar Prompt IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Prompt IA": {
+      "main": [
+        [
+          {
+            "node": "Chamar IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar IA": {
+      "main": [
+        [
+          {
+            "node": "Gerar Resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Gerar Resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Chat": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Resumo": {
+      "main": [
+        [
+          {
+            "node": "Criar Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Token Firestore": {
+      "main": [
+        [
+          {
+            "node": "Trocar JWT por Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trocar JWT por Token": {
+      "main": [
+        [
+          {
+            "node": "Preparar Tasks com Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Tasks com Token": {
+      "main": [
+        [
+          {
+            "node": "Gravar no Firestore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2d148570-ee1e-4f60-826f-50dfd7c63b6d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8b611be7f605965f4a41304dd2f815af29ef73668724c6db9f8d923f2eff2607"
+  },
+  "id": "gTi6vM5xl9YQBQQy",
+  "tags": []
+}

@@ -464,6 +464,115 @@ async function handleAddArea() {
     }
 }
 
+
+// 1.3 CALCULAR E RENDERIZAR CARDS DE FRENTES OPERACIONAIS COM DRILL-DOWN PULSANTE
+function renderFrentesOperacionais() {
+    const listBody = document.getElementById("frentesGridBody");
+    if (!listBody) return;
+    
+    // Agrupa tarefas por área cliente
+    const areaMap = {};
+    tasksList.forEach(t => {
+        const area = t.areaCliente || "Geral";
+        if (!areaMap[area]) areaMap[area] = [];
+        areaMap[area].push(t);
+    });
+    
+    if (Object.keys(areaMap).length === 0) {
+        listBody.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">
+                Nenhuma frente operacional encontrada.
+            </div>
+        `;
+        return;
+    }
+    
+    listBody.innerHTML = "";
+    
+    // Paleta de cores premium baseadas na marca
+    const frenteColors = {
+        "TI": "var(--primary)",
+        "Operações": "var(--purple)",
+        "GTC": "var(--success)",
+        "Jurídico": "var(--warning)",
+        "Geral": "var(--text-secondary)"
+    };
+    
+    Object.entries(areaMap).forEach(([area, list]) => {
+        const totalArea = list.length;
+        const concluidasArea = list.filter(t => t.status === "Concluído").length;
+        const pendentesArea = totalArea - concluidasArea;
+        const bloqueadasArea = list.filter(t => t.status === "Bloqueado").length;
+        const atrasadasArea = list.filter(t => t.status === "Atrasado").length;
+        
+        // Média de avanço físico da área
+        let sumPercentage = 0;
+        list.forEach(t => sumPercentage += t.percentualConcluido);
+        const avgCompletion = totalArea > 0 ? Math.round(sumPercentage / totalArea) : 0;
+        
+        // Determina o semáforo de status (verde, amarelo, vermelho)
+        let statusColor = "green";
+        let statusText = "SAUDÁVEL";
+        
+        if (bloqueadasArea > 0 || atrasadasArea > 0) {
+            statusColor = "red";
+            statusText = "CRÍTICO";
+        } else if (avgCompletion < 35 || list.some(t => {
+            if (t.status === "Concluído" || !t.prazo) return false;
+            const diffDays = Math.ceil((new Date(t.prazo + "T00:00:00") - new Date()) / (1000 * 60 * 60 * 24));
+            return diffDays >= 0 && diffDays <= 5;
+        })) {
+            statusColor = "yellow";
+            statusText = "EM RISCO";
+        }
+        
+        const card = document.createElement("div");
+        card.className = "card-frente";
+        card.setAttribute("data-area", area);
+        
+        const color = frenteColors[area] || "var(--primary)";
+        
+        // Circunferência do anel = 2 * PI * r = 2 * 3.14159 * 24 = 150.8
+        const circumference = 150.8;
+        const offset = circumference - (circumference * avgCompletion) / 100;
+        
+        card.innerHTML = `
+            <div class="frente-header">
+                <div class="frente-name-wrapper">
+                    <span class="frente-name" title="${area}">${area}</span>
+                    <span class="frente-pilar-tag">${totalArea} atividade(s)</span>
+                </div>
+                <span class="frente-status-dot ${statusColor}" title="Status da Frente: ${statusText}"></span>
+            </div>
+            <div class="frente-body">
+                <div class="frente-metrics">
+                    <span class="frente-metric-row">Concluídas: <span class="frente-metric-val">${concluidasArea}</span></span>
+                    <span class="frente-metric-row">Pendentes: <span class="frente-metric-val">${pendentesArea}</span></span>
+                </div>
+                <div class="frente-gauge">
+                    <svg class="frente-gauge-ring" width="60" height="60">
+                        <circle cx="30" cy="30" r="24" stroke="rgba(255, 255, 255, 0.05)" stroke-width="4" fill="transparent"/>
+                        <circle cx="30" cy="30" r="24" stroke="${color}" stroke-width="4" fill="transparent" stroke-dasharray="150.8" stroke-dashoffset="${offset}" style="stroke-linecap: round; box-shadow: 0 0 8px ${color}80;"/>
+                    </svg>
+                    <span class="frente-gauge-value">${avgCompletion}%</span>
+                </div>
+            </div>
+        `;
+        
+        // Drill-Down: ao clicar na frente operacional, vai direto para as atividades filtrando por busca
+        card.addEventListener("click", () => {
+            showTab("activities");
+            const searchInput = document.getElementById("inputSearch");
+            if (searchInput) {
+                searchInput.value = area;
+                filterTasks();
+            }
+        });
+        
+        listBody.appendChild(card);
+    });
+}
+
 // 3. RENDERIZAÇÃO DA TABELA E FILTROS DO CRUD
 function renderTasksTable(filteredList = null) {
     const tbody = document.getElementById("activitiesTableBody");
@@ -568,7 +677,7 @@ function setupTableActionListeners() {
                 return;
             }
             const docId = row.getAttribute("data-docid");
-            openEditModal(docId);
+            openEditDrawer(docId);
         });
     });
 
@@ -577,7 +686,7 @@ function setupTableActionListeners() {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             const docId = btn.getAttribute("data-docid");
-            openEditModal(docId);
+            openEditDrawer(docId);
         });
     });
 
@@ -711,6 +820,9 @@ function updateDashboardMetrics() {
 
     // Popula Sidebar 1: Marcos Críticos & Prazos
     populateMilestonesSidebar();
+    
+    // Popula Frentes Operacionais com Drill-Down na Home
+    renderFrentesOperacionais();
 
     // Popula Sidebar 2: Progresso por Pilar GRC
     populatePilarBreakdownSidebar();
@@ -1156,17 +1268,20 @@ function exportToExcel() {
     }
 }
 
-// 7. CONTROLES DO MODAL E FORMULÁRIO (CRUD)
-const modal = document.getElementById("activityModal");
+// 7. CONTROLES DA GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) E FORMULÁRIO (CRUD)
+const drawer = document.getElementById("activityDrawer");
+const drawerBackdrop = document.getElementById("execDrawerBackdrop");
 const form = document.getElementById("activityForm");
 
-function openNewActivityModal() {
+function openNewActivityDrawer() {
     form.reset();
     document.getElementById("taskDocId").value = "";
-    document.getElementById("modalTitle").innerText = "Nova Atividade";
+    document.getElementById("drawerTitle").innerText = "Nova Atividade";
+    document.getElementById("drawerSubtitle").innerText = "Cadastro de Iniciativa GRC";
     
     // Oculta botão de excluir no modal de cadastro
-    document.getElementById("btnDeleteFromModal").style.display = "none";
+    document.getElementById("btnDeleteFromDrawer").style.display = "none";
+    document.getElementById("drawerChecklistSection").style.display = "none";
     
     // Auto-calcula o próximo ID sequencial
     let nextNum = 1;
@@ -1183,18 +1298,20 @@ function openNewActivityModal() {
     document.getElementById("taskDeadline").value = today;
     document.getElementById("taskPercent").value = 0;
 
-    modal.classList.add("active");
+    drawer.classList.add("active");
+    drawerBackdrop.classList.add("active");
 }
 
-function openEditModal(docId) {
+function openEditDrawer(docId) {
     const task = tasksList.find(t => t.docId === docId);
     if (!task) return;
 
     document.getElementById("taskDocId").value = docId;
-    document.getElementById("modalTitle").innerText = "Editar Atividade";
+    document.getElementById("drawerTitle").innerText = "Editar Atividade";
+    document.getElementById("drawerSubtitle").innerText = `Detalhes da Demanda ${task.id}`;
     
     // Exibe o botão de excluir no modal de edição
-    document.getElementById("btnDeleteFromModal").style.display = "flex";
+    document.getElementById("btnDeleteFromDrawer").style.display = "flex";
     
     document.getElementById("taskID").value = task.id;
     document.getElementById("taskID").disabled = true; // não edita o ID
@@ -1208,15 +1325,43 @@ function openEditModal(docId) {
     document.getElementById("taskStart").value = task.inicio;
     document.getElementById("taskDeadline").value = task.prazo;
     document.getElementById("taskPercent").value = task.percentualConcluido;
-    document.getElementById("taskDeliverable").value = task.entregavel;
-    document.getElementById("taskNotes").value = task.observacoes;
+    document.getElementById("taskDeliverable").value = task.entregavel || "";
+    document.getElementById("taskNotes").value = task.observacoes || "";
 
-    modal.classList.add("active");
+    // Carrega seção de Checklist operacional obtida do MS Planner via N8N
+    const checklistSection = document.getElementById("drawerChecklistSection");
+    const checklistList = document.getElementById("drawerChecklistList");
+    
+    if (checklistSection && checklistList) {
+        const checklistData = task.checklist;
+        if (checklistData && Object.keys(checklistData).length > 0) {
+            checklistList.innerHTML = "";
+            Object.values(checklistData).forEach(item => {
+                const div = document.createElement("div");
+                div.className = "drawer-checklist-item";
+                const isChecked = item.isChecked ? "checked" : "";
+                const checkedAttr = item.isChecked ? "checked" : "";
+                div.innerHTML = `
+                    <input type="checkbox" class="drawer-checklist-checkbox" ${checkedAttr} disabled>
+                    <span class="drawer-checklist-title ${isChecked}">${item.title}</span>
+                `;
+                checklistList.appendChild(div);
+            });
+            checklistSection.style.display = "flex";
+        } else {
+            checklistSection.style.display = "none";
+        }
+    }
+
+    drawer.classList.add("active");
+    drawerBackdrop.classList.add("active");
 }
 
-function closeModal() {
-    modal.classList.remove("active");
+function closeDrawer() {
+    drawer.classList.remove("active");
+    drawerBackdrop.classList.remove("active");
 }
+
 
 // Submissão do Formulário (Salvar / Editar no Firestore)
 async function handleFormSubmit(e) {
@@ -1255,7 +1400,7 @@ async function handleFormSubmit(e) {
             await addDoc(collection(db, "activities"), taskData);
             console.log("Nova atividade inserida no Firestore!");
         }
-        closeModal();
+        closeDrawer();
     } catch (err) {
         alert("Erro ao salvar no Firebase Firestore: " + err.message);
     }
@@ -1329,14 +1474,44 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("filterResponsible").addEventListener("change", filterTasks);
     document.getElementById("filterPriority").addEventListener("change", filterTasks);
 
-    // Liga botões CRUD
-    document.getElementById("btnNewActivity").addEventListener("click", openNewActivityModal);
-    document.getElementById("btnCloseModal").addEventListener("click", closeModal);
-    document.getElementById("btnCancelModal").addEventListener("click", closeModal);
+    // Liga botões CRUD da Gaveta Lateral (Drawer)
+    document.getElementById("btnNewActivity").addEventListener("click", openNewActivityDrawer);
+    document.getElementById("btnCloseDrawer").addEventListener("click", closeDrawer);
+    document.getElementById("btnCancelDrawer").addEventListener("click", closeDrawer);
+    document.getElementById("execDrawerBackdrop").addEventListener("click", closeDrawer);
+    
+    // Liga botões de Drill-Down nos cards de métricas superiores
+    document.getElementById("metricCardTotal").addEventListener("click", () => {
+        showTab("activities");
+        document.getElementById("inputSearch").value = "";
+        document.getElementById("filterStatus").value = "";
+        document.getElementById("filterPilar").value = "";
+        document.getElementById("filterResponsible").value = "";
+        document.getElementById("filterPriority").value = "";
+        filterTasks();
+    });
+    
+    document.getElementById("metricCardCompleted").addEventListener("click", () => {
+        showTab("activities");
+        document.getElementById("filterStatus").value = "Concluído";
+        filterTasks();
+    });
+    
+    document.getElementById("metricCardProgress").addEventListener("click", () => {
+        showTab("activities");
+        document.getElementById("filterStatus").value = "Em andamento";
+        filterTasks();
+    });
+    
+    document.getElementById("metricCardSla").addEventListener("click", () => {
+        showTab("activities");
+        document.getElementById("filterStatus").value = "Atrasado";
+        filterTasks();
+    });
     form.addEventListener("submit", handleFormSubmit);
 
-    // Liga exclusão direta por dentro do modal de edição
-    document.getElementById("btnDeleteFromModal").addEventListener("click", async () => {
+    // Liga exclusão direta por dentro do Drawer lateral
+    document.getElementById("btnDeleteFromDrawer").addEventListener("click", async () => {
         const docId = document.getElementById("taskDocId").value;
         if (!docId) return;
         const task = tasksList.find(t => t.docId === docId);
@@ -1344,7 +1519,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 await deleteDoc(doc(db, "activities", docId));
                 console.log("Atividade excluída!");
-                closeModal();
+                closeDrawer();
             } catch (err) {
                 alert("Erro ao excluir do Firebase: " + err.message);
             }

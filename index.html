@@ -97,10 +97,12 @@
                     </div>
                 </div>
 
+
+
                 <!-- Métricas Principais -->
                 <div class="dashboard-grid">
                     <!-- Metric 1: Total -->
-                    <div class="card-metric">
+                    <div id="metricCardTotal" class="card-metric clickable" title="Clique para limpar filtros e ver todas as ações">
                         <div class="metric-header">
                             <span>TOTAL DE ATIVIDADES</span>
                             <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" /></svg></span>
@@ -109,7 +111,7 @@
                         <div class="metric-footer">Volume monitorado de ações</div>
                     </div>
                     <!-- Metric 2: Concluídas -->
-                    <div class="card-metric success">
+                    <div id="metricCardCompleted" class="card-metric success clickable" title="Clique para filtrar apenas as concluídas">
                         <div class="metric-header">
                             <span>CONCLUÍDAS</span>
                             <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
@@ -118,7 +120,7 @@
                         <div class="metric-footer">Ações 100% finalizadas</div>
                     </div>
                     <!-- Metric 3: Em andamento -->
-                    <div class="card-metric purple">
+                    <div id="metricCardProgress" class="card-metric purple clickable" title="Clique para filtrar apenas em andamento">
                         <div class="metric-header">
                             <span>EM ANDAMENTO</span>
                             <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></span>
@@ -127,7 +129,7 @@
                         <div class="metric-footer">Ações em andamento ativas</div>
                     </div>
                     <!-- Metric 4: Eficiência (SLA) -->
-                    <div class="card-metric warning">
+                    <div id="metricCardSla" class="card-metric warning clickable" title="Clique para filtrar pontos de atenção (atrasadas/bloqueadas)">
                         <div class="metric-header">
                             <span>SLA DE PRAZOS</span>
                             <span class="metric-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
@@ -146,6 +148,16 @@
                             </div>
                         </div>
                         <button class="btn-secondary" onclick="app.showTab('activities'); document.getElementById('filterStatus').value='Atrasado'; app.filterTasks();">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <!-- GRID DE FRENTES OPERACIONAIS COM DRILL-DOWN (NOVO) -->
+                <div class="frentes-section-title">
+                    <span>💼 Frentes Operacionais & Portfólio de Iniciativas (Drill-Down)</span>
+                </div>
+                <div id="frentesGridBody" class="frentes-grid">
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">
+                        Carregando frentes operacionais do Firestore...
                     </div>
                 </div>
 
@@ -452,129 +464,139 @@
         </main>
     </div>
 
-    <!-- MODAL DE CADASTRO/EDIÇÃO DE ATIVIDADE -->
-    <div id="activityModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="modalTitle" class="modal-title">Nova Atividade</span>
-                <button class="btn-close-modal" id="btnCloseModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.25rem; height: 1.25rem;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
+    <!-- GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) PARA CRUD -->
+    <div id="execDrawerBackdrop" class="exec-drawer-backdrop"></div>
+    <aside id="activityDrawer" class="exec-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title-wrapper">
+                <span id="drawerTitle" class="drawer-title">Nova Atividade</span>
+                <span id="drawerSubtitle" class="drawer-subtitle">Cadastro de Iniciativa GRC</span>
             </div>
-            
-            <form id="activityForm">
-                <input type="hidden" id="taskDocId">
-                <div class="modal-body">
-                    <div class="form-grid">
-                        <!-- ID -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskID">ID da Atividade</label>
-                            <input type="text" id="taskID" class="form-control" placeholder="Ex: AT-008" required>
-                        </div>
-                        
-                        <!-- Pilar -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskPilar">Pilar GRC</label>
-                            <select id="taskPilar" class="form-control" required>
-                                <option value="Segurança da Informação">Segurança da Informação</option>
-                                <option value="Privacidade / LGPD">Privacidade / LGPD</option>
-                                <option value="ISO 27001">ISO 27001</option>
-                                <option value="ISO 9001">ISO 9001</option>
-                                <option value="Auditoria Interna">Auditoria Interna</option>
-                                <option value="Processos / Lean">Processos / Lean</option>
-                                <option value="Conscientização">Conscientização</option>
-                            </select>
-                        </div>
+            <button class="btn-close-modal" id="btnCloseDrawer" title="Fechar Gaveta">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.25rem; height: 1.25rem;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <form id="activityForm" style="display: flex; flex-direction: column; height: calc(100% - 73px);">
+            <input type="hidden" id="taskDocId">
+            <div class="drawer-body">
+                <div class="form-grid" style="grid-template-columns: 1fr;">
+                    <!-- ID da Atividade -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskID">ID da Atividade</label>
+                        <input type="text" id="taskID" class="form-control" placeholder="Ex: AT-008" required>
+                    </div>
+                    
+                    <!-- Pilar GRC -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskPilar">Pilar GRC</label>
+                        <select id="taskPilar" class="form-control" required>
+                            <option value="Segurança da Informação">Segurança da Informação</option>
+                            <option value="Privacidade / LGPD">Privacidade / LGPD</option>
+                            <option value="ISO 27001">ISO 27001</option>
+                            <option value="ISO 9001">ISO 9001</option>
+                            <option value="Auditoria Interna">Auditoria Interna</option>
+                            <option value="Processos / Lean">Processos / Lean</option>
+                            <option value="Conscientização">Conscientização</option>
+                        </select>
+                    </div>
 
-                        <!-- Atividade -->
-                        <div class="form-group full-width">
-                            <label class="form-label" for="taskAtividade">Atividade</label>
-                            <input type="text" id="taskAtividade" class="form-control" placeholder="Descrição resumida da atividade" required>
-                        </div>
+                    <!-- Atividade -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskAtividade">Atividade</label>
+                        <input type="text" id="taskAtividade" class="form-control" placeholder="Descrição resumida da atividade" required>
+                    </div>
 
-                        <!-- Área Cliente -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskArea">Área Cliente</label>
-                            <select id="taskArea" class="form-control" required>
-                                <!-- Populado dinamicamente via Firebase settings -->
-                            </select>
-                        </div>
+                    <!-- Área Cliente -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskArea">Área Cliente</label>
+                        <select id="taskArea" class="form-control" required>
+                            <!-- Populado dinamicamente via Firebase settings -->
+                        </select>
+                    </div>
 
-                        <!-- Responsável -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskResponsible">Responsável</label>
-                            <select id="taskResponsible" class="form-control" required>
-                                <!-- Populado dinamicamente via Firebase settings -->
-                            </select>
-                        </div>
+                    <!-- Responsável -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskResponsible">Responsável</label>
+                        <select id="taskResponsible" class="form-control" required>
+                            <!-- Populado dinamicamente via Firebase settings -->
+                        </select>
+                    </div>
 
-                        <!-- Prioridade -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskPriority">Prioridade</label>
-                            <select id="taskPriority" class="form-control" required>
-                                <option value="Alta">Alta</option>
-                                <option value="Média">Média</option>
-                                <option value="Baixa">Baixa</option>
-                            </select>
-                        </div>
+                    <!-- Prioridade -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskPriority">Prioridade</label>
+                        <select id="taskPriority" class="form-control" required>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
 
-                        <!-- Status -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskStatus">Status</label>
-                            <select id="taskStatus" class="form-control" required>
-                                <option value="Não iniciado">Não iniciado</option>
-                                <option value="Em andamento">Em andamento</option>
-                                <option value="Concluído">Concluído</option>
-                                <option value="Atrasado">Atrasado</option>
-                                <option value="Bloqueado">Bloqueado</option>
-                            </select>
-                        </div>
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskStatus">Status</label>
+                        <select id="taskStatus" class="form-control" required>
+                            <option value="Não iniciado">Não iniciado</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluído">Concluído</option>
+                            <option value="Atrasado">Atrasado</option>
+                            <option value="Bloqueado">Bloqueado</option>
+                        </select>
+                    </div>
 
-                        <!-- Início -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskStart">Data de Início</label>
-                            <input type="date" id="taskStart" class="form-control" required>
-                        </div>
+                    <!-- Início -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskStart">Data de Início</label>
+                        <input type="date" id="taskStart" class="form-control" required>
+                    </div>
 
-                        <!-- Prazo -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskDeadline">Prazo (Fim)</label>
-                            <input type="date" id="taskDeadline" class="form-control" required>
-                        </div>
+                    <!-- Prazo -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskDeadline">Prazo (Fim)</label>
+                        <input type="date" id="taskDeadline" class="form-control" required>
+                    </div>
 
-                        <!-- % Concluído -->
-                        <div class="form-group">
-                            <label class="form-label" for="taskPercent">Progresso (% Concluído)</label>
-                            <input type="number" id="taskPercent" class="form-control" min="0" max="100" placeholder="0 a 100" required>
-                        </div>
+                    <!-- % Concluído -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskPercent">Progresso (% Concluído)</label>
+                        <input type="number" id="taskPercent" class="form-control" min="0" max="100" placeholder="0 a 100" required>
+                    </div>
 
-                        <!-- Entregável -->
-                        <div class="form-group full-width">
-                            <label class="form-label" for="taskDeliverable">Entregável / Evidência</label>
-                            <input type="text" id="taskDeliverable" class="form-control" placeholder="Evidência gerada (ex: Documento de revisão no SGI)">
-                        </div>
+                    <!-- Entregável -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskDeliverable">Entregável / Evidência</label>
+                        <input type="text" id="taskDeliverable" class="form-control" placeholder="Evidência gerada (ex: Documento de revisão no SGI)">
+                    </div>
 
-                        <!-- Observações -->
-                        <div class="form-group full-width">
-                            <label class="form-label" for="taskNotes">Observações</label>
-                            <textarea id="taskNotes" class="form-control" placeholder="Detalhes, atrasos ou dependências..."></textarea>
-                        </div>
+                    <!-- Observações -->
+                    <div class="form-group">
+                        <label class="form-label" for="taskNotes">Observações</label>
+                        <textarea id="taskNotes" class="form-control" placeholder="Detalhes, atrasos ou dependências..."></textarea>
                     </div>
                 </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn-danger-outline" id="btnDeleteFromModal" style="margin-right: auto; display: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-1.802a2.25 2.25 0 0 0-2.25-2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.802" /></svg>
-                        Excluir Atividade
-                    </button>
-                    <button type="button" class="btn-secondary" id="btnCancelModal">Cancelar</button>
-                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+
+                <!-- SEÇÃO OPERACIONAL: CHECKLIST (NOVO - EXIBIÇÃO APENAS) -->
+                <div id="drawerChecklistSection" class="drawer-section" style="display: none; margin-top: 1.5rem;">
+                    <span class="drawer-section-title">📝 Subtarefas e Checklist (Planner)</span>
+                    <div id="drawerChecklistList" class="drawer-checklist-list">
+                        <!-- Populado dinamicamente via JS -->
+                    </div>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+            
+            <div class="drawer-footer">
+                <button type="button" class="btn-danger-outline" id="btnDeleteFromDrawer" style="margin-right: auto; display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-1.802a2.25 2.25 0 0 0-2.25-2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.802" /></svg>
+                    Excluir Atividade
+                </button>
+                <button type="button" class="btn-secondary" id="btnCancelDrawer">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </aside>
 
     <!-- CARREGAMENTO DE BIBLIOTECAS VIA CDN confiáveis do ES Modules / unpkg -->
     

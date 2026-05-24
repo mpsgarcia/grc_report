@@ -1586,4 +1586,398 @@ textarea.form-control {
     color: var(--danger);
 }
 
+/* ==========================================================================
+   FASE 2: COMPONENTES GRC PREMIUM (AI PARECER, FRENTES COM DRILL-DOWN, DRAWER)
+   ========================================================================== */
+
+/* 1. Card de Parecer Executivo do Argos IA */
+.card-ai-opinion {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: 20px;
+    padding: 2.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.card-ai-opinion::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #7c3aed, #3b82f6);
+}
+
+.card-ai-opinion:hover {
+    border-color: rgba(124, 58, 237, 0.4);
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.12);
+}
+
+.ai-opinion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.ai-opinion-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(124, 58, 237, 0.12);
+    color: #a78bfa;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    padding: 0.4rem 0.9rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+[data-theme="light"] .ai-opinion-badge {
+    background: rgba(124, 58, 237, 0.06);
+    color: #6d28d9;
+}
+
+.ai-opinion-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.ai-opinion-body {
+    font-size: 0.925rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.ai-opinion-body b, .ai-opinion-body strong {
+    color: #c084fc;
+}
+
+[data-theme="light"] .ai-opinion-body b, [data-theme="light"] .ai-opinion-body strong {
+    color: #7c3aed;
+}
+
+.ai-opinion-body blockquote {
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid #7c3aed;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    border-radius: 0 12px 12px 0;
+}
+
+[data-theme="light"] .ai-opinion-body blockquote {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.ai-opinion-body hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 1.5rem 0;
+}
+
+/* 2. Grid e Cards de Frentes Operacionais com Drill-Down */
+.frentes-section-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.frentes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card-frente {
+    background: var(--bg-surface);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1.5rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px;
+}
+
+.card-frente:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-color-glow);
+    box-shadow: var(--shadow-md);
+}
+
+.frente-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.frente-name-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 75%;
+}
+
+.frente-name {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.frente-pilar-tag {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Semáforos dinâmicos premium pulsantes */
+.frente-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.frente-status-dot::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: dotPulse 2s infinite ease-in-out;
+}
+
+.frente-status-dot.green { background: #0071e3; }
+.frente-status-dot.green::after { background: #0071e3; }
+
+.frente-status-dot.yellow { background: #ff791b; }
+.frente-status-dot.yellow::after { background: #ff791b; }
+
+.frente-status-dot.red { background: #b64400; }
+.frente-status-dot.red::after { background: #b64400; }
+
+@keyframes dotPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}
+
+.frente-body {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.frente-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.frente-metric-row {
+    font-size: 0.775rem;
+    color: var(--text-secondary);
+}
+
+.frente-metric-val {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.frente-gauge {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frente-gauge-ring {
+    transform: rotate(-90deg);
+}
+
+.frente-gauge-value {
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* 3. Gaveta Lateral Premium (Drawer Slide-Over) */
+.exec-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.exec-drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.exec-drawer {
+    position: fixed;
+    top: 0;
+    right: -480px;
+    width: 100%;
+    max-width: 480px;
+    height: 100%;
+    background: var(--bg-surface-elevated);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exec-drawer.active {
+    right: 0;
+}
+
+.drawer-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.drawer-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.drawer-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.drawer-subtitle {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.drawer-body {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.drawer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.drawer-section-title {
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.25rem;
+}
+
+.drawer-checklist-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.drawer-checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.drawer-checklist-checkbox {
+    margin-top: 0.15rem;
+    pointer-events: none; /* apenas visualização */
+}
+
+.drawer-checklist-title.checked {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.drawer-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* 4. Transições de Abas Suaves e Outros Refinamentos */
+.card-metric.clickable {
+    cursor: pointer;
+}
+
+.card-metric.clickable:hover {
+    border-color: var(--border-color-glow);
+}
+
 
