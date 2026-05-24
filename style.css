@@ -22,9 +22,9 @@
     --color-spread-purple-active: #3D0E7A;
     --color-spread-purple-light:  #6E3AB8;  /* Tom mais claro pra fundos escuros */
 
-    /* Gradient assinatura Spread (Laranja → Roxo) */
-    --gradient-spread: linear-gradient(135deg, var(--color-spread-orange) 0%, var(--color-spread-purple) 100%);
-    --gradient-spread-soft: linear-gradient(135deg, rgba(255, 116, 0, 0.18) 0%, rgba(75, 17, 150, 0.18) 100%);
+    /* Cores de Assinatura Spread Sólidas (Sem Degrades) */
+    --gradient-spread: var(--color-spread-orange);
+    --gradient-spread-soft: rgba(255, 116, 0, 0.08);
 
     --font-primary: "Ubuntu", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     --font-heading: "Montserrat", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
@@ -351,7 +351,7 @@ main {
 
 /* 1.1 Card Principal de Comando (GRC Health Score) */
 .card-command-health {
-    background: linear-gradient(135deg, rgba(255, 116, 0, 0.08) 0%, rgba(75, 17, 150, 0.06) 100%);
+    background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 2.25rem;
@@ -965,7 +965,7 @@ main {
 }
 .progress-fill-gradient {
     height: 100%;
-    background: linear-gradient(to right, var(--primary), var(--purple));
+    background: var(--primary);
     border-radius: 99px;
 }
 .progress-text-clean {
@@ -1211,12 +1211,7 @@ main {
     font-weight: 800;
     text-align: center;
     margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: linear-gradient(to right, var(--primary), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary);
 }
 
 /* ── LAYOUT 7: CONFIGURAÇÕES E CAMPOS DINÂMICOS ── */
@@ -1511,7 +1506,7 @@ textarea.form-control {
     gap: 1rem;
     padding: 1.5rem 1.75rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(135deg, rgba(255, 116, 0, 0.06) 0%, transparent 60%);
+    background: rgba(45, 45, 45, 0.2);
     flex-shrink: 0;
 }
 
@@ -1676,7 +1671,7 @@ textarea.form-control {
    ========================================================================== */
 
 .vp-alert-block {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.07) 0%, rgba(245, 158, 11, 0.04) 100%);
+    background: rgba(239, 68, 68, 0.05);
     border: 1px solid rgba(239, 68, 68, 0.25);
     border-radius: 16px;
     padding: 1rem 1.25rem 0.85rem;
