@@ -8,107 +8,8 @@ import {
     doc, updateDoc, deleteDoc, writeBatch, setDoc 
 } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-// DADOS SEMENTE: As 7 tarefas reais extraídas da planilha GRC original
-const seedTasks = [
-    {
-        id: "AT-001",
-        atividade: "Revisão de políticas de acesso lógico",
-        pilar: "Segurança da Informação",
-        areaCliente: "TI",
-        responsavel: "Marcos",
-        prioridade: "Alta",
-        status: "Em andamento",
-        inicio: "2026-05-04",
-        prazo: "2026-05-22",
-        percentualConcluido: 60,
-        entregavel: "Documento revisado no SGI",
-        observacoes: "Alinhada à ISO 27001 A.5.15"
-    },
-    {
-        id: "AT-002",
-        atividade: "Pipeline N8N — notificação de incidentes",
-        pilar: "Segurança da Informação",
-        areaCliente: "TI",
-        responsavel: "Marcos",
-        prioridade: "Alta",
-        status: "Em andamento",
-        inicio: "2026-04-20",
-        prazo: "2026-06-05",
-        percentualConcluido: 75,
-        entregavel: "Fluxo N8N + relatório de testes",
-        observacoes: "Pendente: encoding UTF-8 e Microsoft 365 node"
-    },
-    {
-        id: "AT-003",
-        atividade: "Comunicação interna sobre auditoria — MEC",
-        pilar: "Auditoria Interna",
-        areaCliente: "Todas as áreas",
-        responsavel: "Time de Processos",
-        prioridade: "Média",
-        status: "Concluído",
-        inicio: "2026-05-06",
-        prazo: "2026-05-12",
-        percentualConcluido: 100,
-        entregavel: "Comunicado enviado por e-mail e Teams",
-        observacoes: "Comunicado enviado a todas as áreas"
-    },
-    {
-        id: "AT-004",
-        atividade: "Treinamento de conscientização — DPO",
-        pilar: "Conscientização",
-        areaCliente: "Todas as áreas",
-        responsavel: "Marcos",
-        prioridade: "Média",
-        status: "Não iniciado",
-        inicio: "2026-06-01",
-        prazo: "2026-06-20",
-        percentualConcluido: 0,
-        entregavel: "Material e gravação da sessão",
-        observacoes: "Planejado para o próximo ciclo"
-    },
-    {
-        id: "AT-005",
-        atividade: "Plano de ação corretiva — NC-12",
-        pilar: "Processos / Lean",
-        areaCliente: "Operações",
-        responsavel: "Time de Processos",
-        prioridade: "Alta",
-        status: "Atrasado",
-        inicio: "2026-04-28",
-        prazo: "2026-05-15",
-        percentualConcluido: 40,
-        entregavel: "Plano de ação formalizado",
-        observacoes: "Aguardando retorno do dono do processo"
-    },
-    {
-        id: "AT-006",
-        atividade: "Manual SGI integrado — Cláusula 4.1",
-        pilar: "ISO 9001",
-        areaCliente: "Diretoria",
-        responsavel: "Marcos",
-        prioridade: "Média",
-        status: "Em andamento",
-        inicio: "2026-05-05",
-        prazo: "2026-05-30",
-        percentualConcluido: 50,
-        entregavel: "Capítulo 4 do Manual SGI",
-        observacoes: "Inclui bullet de mudanças climáticas (amend. 2024)"
-    },
-    {
-        id: "AT-007",
-        atividade: "Coleta de evidências — Anexo A ISO 27001",
-        pilar: "ISO 27001",
-        areaCliente: "TI",
-        responsavel: "Marcos",
-        prioridade: "Alta",
-        status: "Em andamento",
-        inicio: "2026-05-01",
-        prazo: "2026-06-30",
-        percentualConcluido: 30,
-        entregavel: "Pasta de evidências no SGI",
-        observacoes: "Foco nos controles do Tema 5 (Organizacionais)"
-    }
-];
+// DADOS OPERACIONAIS: Todos os dados de tarefas são consumidos diretamente em tempo real do Firebase Firestore
+
 
 // ESTADO GLOBAL DO APLICATIVO
 let db = null;
@@ -204,20 +105,12 @@ function setupRealtimeSync() {
     const tasksCollection = collection(db, "activities");
     
     onSnapshot(tasksCollection, async (snapshot) => {
-        // Se a coleção estiver vazia, faz o seeding automático em massa
+        // Se a coleção estiver vazia, apenas atualiza o estado com lista vazia
         if (snapshot.empty) {
-            console.log("Banco de dados vazio! Inicializando carga automática das 7 tarefas reais...");
-            try {
-                const batch = writeBatch(db);
-                seedTasks.forEach((task) => {
-                    const docRef = doc(tasksCollection);
-                    batch.set(docRef, task);
-                });
-                await batch.commit();
-                console.log("Carga automática concluída com sucesso no Firebase!");
-            } catch (err) {
-                console.error("Erro ao realizar a carga inicial automática:", err);
-            }
+            console.log("Banco de dados do Firestore está vazio.");
+            tasksList = [];
+            updateDashboardMetrics();
+            renderTasksTable();
             return;
         }
 
