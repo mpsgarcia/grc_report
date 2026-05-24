@@ -391,6 +391,17 @@
                         <div id="configConnectionAlert" class="alert-box warning">
                             <!-- Preenchido via JS -->
                         </div>
+
+                        <!-- Botão de limpeza de banco de dados -->
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.75rem;">
+                            <label class="form-label" style="color: var(--danger); font-weight: 700; display: block; margin-bottom: 0.25rem;">⚠️ Zona de Perigo / Limpeza de Dados</label>
+                            <p class="config-info-text" style="margin-bottom: 0.5rem;">
+                                Como os dados de simulação/teste foram gravados anteriormente no seu projeto do Firebase, clique abaixo para excluir permanentemente todas as atividades cadastradas no Firestore e deixar o banco de dados limpo para novas atividades reais.
+                            </p>
+                            <button id="btnClearAllActivities" class="btn-danger-outline" style="width: fit-content; padding: 0.6rem 1.2rem; cursor: pointer; border: 1px solid var(--danger); border-radius: 8px; background: transparent; color: var(--danger); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition-smooth);">
+                                🗑️ Limpar Todas as Atividades do Firebase
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Gestão de Parâmetros -->

@@ -1187,6 +1187,32 @@ function exportToExcel() {
     }
 }
 
+// Função para limpar todas as atividades do Firestore
+async function handleClearAllActivities() {
+    if (!confirm("🚨 ATENÇÃO: Esta ação é irreversível e excluirá permanentemente todas as atividades cadastradas no Firestore. Deseja continuar?")) {
+        return;
+    }
+
+    if (db === null) {
+        alert("Não é possível limpar o banco de dados enquanto o Firebase estiver offline.");
+        return;
+    }
+
+    try {
+        const batch = writeBatch(db);
+        tasksList.forEach(t => {
+            const docRef = doc(db, "activities", t.docId);
+            batch.delete(docRef);
+        });
+        await batch.commit();
+        alert("Sucesso: Todas as atividades foram excluídas permanentemente do banco de dados na nuvem!");
+    } catch (err) {
+        console.error("Erro ao limpar banco de dados:", err);
+        alert("Erro ao excluir dados: " + err.message);
+    }
+}
+
+
 // 8. CONTROLES DA GAVETA LATERAL PREMIUM (DRAWER SLIDE-OVER) E FORMULÁRIO (CRUD)
 const drawer = document.getElementById("activityDrawer");
 const drawerBackdrop = document.getElementById("execDrawerBackdrop");
@@ -1520,6 +1546,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Liga botão exportar para excel
     const btnExpXls = document.getElementById("btnExportExcel");
     if (btnExpXls) btnExpXls.addEventListener("click", exportToExcel);
+
+    // Liga botão de limpeza geral do banco de dados (Danger Zone)
+    const btnClearAll = document.getElementById("btnClearAllActivities");
+    if (btnClearAll) btnClearAll.addEventListener("click", handleClearAllActivities);
 
     // Popula dropdowns e badges com valores padrão iniciais imediatamente
     updateSelectDropdowns();
