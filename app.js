@@ -1386,7 +1386,7 @@ function showTab(tabName) {
 
 // Alternar Tema (Dark/Light)
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     
     document.documentElement.setAttribute("data-theme", nextTheme);
@@ -1489,9 +1489,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Recupera tema salvo do local storage
-    const savedTheme = localStorage.getItem("grc-theme") || "dark";
-    if (savedTheme === "light") {
-        toggleTheme(); // muda para claro se salvo como tal
+    const savedTheme = localStorage.getItem("grc-theme") || "light";
+    if (savedTheme === "dark") {
+        toggleTheme(); // muda para escuro se salvo como tal
     }
 
     // Inicializa o Firebase
