@@ -1439,6 +1439,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Botão "Limpar filtros" do Radar Operacional
+    const btnClearFilters = document.getElementById("btnClearFilters");
+    if (btnClearFilters) {
+        btnClearFilters.addEventListener("click", () => {
+            filterSlaOnly = false;
+            inputsToFilter.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            });
+            filterTasks();
+        });
+    }
+
     // Liga botões do Modal de Detalhes (somente leitura)
     const btnCloseModal = document.getElementById("btnCloseModal");
     if (btnCloseModal) btnCloseModal.addEventListener("click", closeDetailModal);

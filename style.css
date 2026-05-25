@@ -2209,6 +2209,32 @@ textarea.form-control {
     }
 }
 
+/* Botão "Limpar filtros" no Radar */
+.btn-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.95rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 9999px;
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+}
+.btn-clear-filters:hover {
+    border-color: var(--color-spread-orange);
+    color: var(--color-spread-orange);
+    background: var(--primary-glow);
+}
+.btn-clear-filters:active {
+    transform: scale(0.97);
+}
+
 /* ==========================================================================
    EXECUTIVE SUMMARY — HIGHLIGHTS ROW (BLUF + 3 chips RAG)
    ========================================================================== */
